@@ -17,17 +17,19 @@ public class Hand {
 	public List<HandHistory> handHistory = Collections.EMPTY_LIST;
 	public List<Card> cards = Collections.EMPTY_LIST;
 	public Integer finalPoints;
+	
 
 	private HAND_OUTCOME handOutcome = null; 
 	
 	
 	public enum HAND_OUTCOME{WIN, LOSS, PUSH}
 	
-	public Hand(BigDecimal amountBet, Card card1, Card card2){
+	public Hand(BigDecimal amountBet, Card ...cardsToAdd){
 		this.amountBet = amountBet;
 		cards = new ArrayList<Card>();
-		cards.add(card1);
-		cards.add(card2);
+		for(Card card : cardsToAdd){
+			cards.add(card);
+		}
 	}
 	
 	//todo normal: handle the cases where there are multiple aces 
@@ -73,12 +75,12 @@ public class Hand {
 	}
 	
 	/**
-	 * Modifies the original hand and returns new hand.
+	 * Modifies this hand and returns new hand. The cards parameters passed in are used to complete two resulting hands. 
 	 * @return
 	 */
-	public void split(Card card1, Card card2){
-		if(cards.size() > 2){
-			throw new RuntimeException("Split only allowed whene there are two cards");
+	public Hand split(Card card1, Card card2){
+		if(!isEligibleForSplit()){
+			throw new RuntimeException("Splitting is not allowed for this hand");
 		}
 		
 		Hand hand1 = this; 
@@ -88,6 +90,7 @@ public class Hand {
 		hand1.cards.set(1, hand2.cards.get(0));
 		// hand 2 is card 2 from the original hand with a new card
 		hand2.cards.set(0, hand1Card2);
+		return hand2;
 	}
 	
 	public void addCard(Card card){

@@ -1,7 +1,5 @@
 package com.skoev.blackjack2.model;
 
-import com.skoev.blackjack.model.Rank;
-import com.skoev.blackjack.model.Suit;
 
 /**
  * 

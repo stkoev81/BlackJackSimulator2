@@ -7,7 +7,6 @@ import java.util.Collections;
  *  
  * - todo normal: add constructors
  * - todo basic: check numround before playing
- * - todo basic: implement lose money
  * @author stefan.t.koev
  *
  */
@@ -20,20 +19,32 @@ public class Game {
 	public Collection<Round> pastRounds = Collections.EMPTY_LIST;
 	public PlayingStrategy playingStrategy = new PlayingStrategy();
 	public Deck deck = new Deck();
-		
-	public boolean playGame(){
-		if (currentRound == null){
-			currentRound = new Round(this);
+	public boolean userInputNeeded = false;
+	
+	public Game(PlayingStrategy playingStrategy, Deck deck){
+		this.playingStrategy = playingStrategy;
+		this.deck = deck;
+	}
+	
+	public void playGame(){
+		if (isFinished()){
+			throw new RuntimeException("this game is already finished. Cannot continue playing");
 		}
-		if(currentRound.playRound(playingStrategy)){
-			numRoundsPlayed ++;
-			pastRounds.add(currentRound);
-			currentRound = null; //round is finished 
-			return true;
+		while (!isFinished() && !userInputNeeded){
+			if (currentRound == null){
+				currentRound = new Round(this);
+			}
+			currentRound.playRound(playingStrategy);
+			if(!userInputNeeded){
+				currentRound = null; //round is finished
+				numRoundsPlayed ++;
+				pastRounds.add(currentRound);
+			}
 		}
-		else {
-			return false;
-		}
+	}
+	
+	public boolean isFinished(){
+		return (numRoundsPlayed >= numRoundsToPlay) && moneyCurrent.doubleValue() <= 0;
 	}
 	
 	public void addMoney(BigDecimal money) {

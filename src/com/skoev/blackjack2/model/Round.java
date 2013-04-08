@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
 
-import com.skoev.blackjack.model.GameState;
-import com.skoev.blackjack.model.Hand;
-import com.skoev.blackjack.model.Offer;
 
 
 /**
@@ -26,8 +25,8 @@ public class Round {
 	public Game game;
 	public List<Hand> hands = new ArrayList<Hand>(); 
 	public Hand dealerHand;
-	public Stack<Hand> handsToResolve = new Stack<Hand>();
-	public Hand handBeingResolved = null;
+	private Queue<Hand> handsToProcess = new LinkedList<Hand>();
+	public Hand currentHand = null;
 	
 		
 	/**
@@ -37,21 +36,22 @@ public class Round {
 		this.game = game;
 	}
 	public enum RoundStatus{
-		HAND_BEING_DEALT, HAND_BEING_INSURED, HAND_BEING_RESOVED, ROUND_FINISHED;
+		HAND_BEING_DEALT, HAND_BEING_INSURED, HANDS_BEING_PLAYED_OUT, HANDS_BEING_COMPARED_TO_DEALERS_HAND, ROUND_FINISHED;
 	}
 	public enum Offer{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
 	
-	public boolean playRound(PlayingStrategy playingStrategy){
+	public void playRound(PlayingStrategy playingStrategy){
 		switch(roundStatus){
 		case HAND_BEING_DEALT: 
 			BigDecimal betAmount = playingStrategy.respondToAmountBet();
 			if(betAmount == null){
-				return false;
+				game.userInputNeeded = true;
+				return;
 			}
 			hands.add(new Hand(betAmount, game.dealCard(), game.dealCard()));
-			dealerHand = new Hand(null, game.dealCard(), game.dealCard());
+			dealerHand = new Hand(null, game.dealCard());
 			roundStatus = RoundStatus.HAND_BEING_INSURED;
 		case HAND_BEING_INSURED: 
 			Offer playerResponse = null;
@@ -59,138 +59,92 @@ public class Round {
 			if(offers.size() > 0 ){
 				playerResponse = playingStrategy.respondToOffer();
 				if(playerResponse == null){
-					return false;
+					game.userInputNeeded = true;
+					return;
 				}
 			}
+			currentHand = hands.get(0);
 			applyOffer(playerResponse);	
-			roundStatus = RoundStatus.HAND_BEING_RESOVED;
-			handsToResolve.addAll(hands);
-			handBeingResolved = null;
+			currentHand = null;
+			handsToProcess.addAll(hands);
+			roundStatus = RoundStatus.HANDS_BEING_PLAYED_OUT;
 			
-		case HAND_BEING_RESOVED:
+		case HANDS_BEING_PLAYED_OUT:  // keep getting player responses until player stands, busts, or gets 21
 			do {
-				if(handBeingResolved == null && handsToResolve.size()>0){
-					handBeingResolved = handsToResolve.pop();
+				if(currentHand == null && handsToProcess.size()>0){
+					currentHand = handsToProcess.remove();
 				}
 				playerResponse = null;
 				playerResponse = playingStrategy.respondToOffer();
 				if(playerResponse == null){
-					return false;
+					game.userInputNeeded = true;
+					return;
 				}
-				applyOffer(playerResponse);//in case of split, the handBeingResolved and handsToResolve will be changed
+				applyOffer(playerResponse); //in case of split, the handBeingResolved and handsToResolve will be changed
 			}	
-			while(handsToResolve.size()>0 || handBeingResolved != null);
+			while(handsToProcess.size() > 0 || currentHand != null);
+			handsToProcess.addAll(hands);
+			roundStatus = RoundStatus.HANDS_BEING_COMPARED_TO_DEALERS_HAND;
+		case HANDS_BEING_COMPARED_TO_DEALERS_HAND: 
+			for(Hand hand : handsToProcess){
+				//compare to dealers hand, mark as won or lost if not already marked, adjust money in each case (the ones marked are not yet adjusted)
+				compareToDealerHandAndAdjustMoney(hand);
+			}
 			roundStatus = RoundStatus.ROUND_FINISHED;
 		}
-		return true;
+		game.userInputNeeded = false;
 	}
 	
 	
 	
 	private void applyOffer(Offer offer){
 		switch(offer){
-		//todo basic: what happens if dealer has 21? Player still plays in the hopes that he will get a 21 and at leas have a push? What happens if player has 21? Dealer still plays out his card? What if player has 21 immediately - is he offered insuance still?  
 		case ACCEPT_INSURANCE:
-			Hand hand = hands.get(0);
-			game.subtractMoney(hand.getInsureanceAmountBet());
-			boolean insuranceWon = false;
-			if(dealerHand.getCurrentPoints() == 21){
-				insuranceWon = true;
-			}
-			if(insuranceWon){
-				game.addMoney(hand.getInsuranceAmountWon());
-				// do nothing -- keep playing because you still have a chance of having a push
-				//now display the dealer's 2nd card
-			}
-			if(!insuranceWon){
-				// insurance already deducted from stake at this point, no need to adjust stake
-				//do nothing - dealer's card is still a secret
-				// keep playing to resolve the hand. 
-			}
 			
+			game.subtractMoney(currentHand.getInsureanceAmountBet());
+			dealerHand.addCard(game.dealCard());
 			
+			if(dealerHand.getCurrentPoints() == 21){ // insurance won
+				game.addMoney(currentHand.getInsuranceAmountWon());
+			}
+			else { // insurance lost
+				// do nothing - insurance already subtracted form money, no need to subtract more money here
+			}
 			break;
 		case DECLINE_INSURANCE:
 			//do nothing
 			break;
 		case STAND:
-
-			int handValue = hand.getValue();
-			Hand.HAND_OUTCOME winLoseOutcome = null;  
-			if(handValue > 21){
-				//automatic loss, do nothing, value is already removed from stake
-				winLoseOutcome = Hand.HAND_OUTCOME.LOSS;
-			}
-			else {
-				//compare to dealer's hand
-				int dealerValue = game.getDealersHandValue();
-				if (handValue < dealerValue){
-					//loss, do nothing, valuei is alreayd removed from stake
-					winLoseOutcome = Hand.HAND_OUTCOME.LOSS;
-				}
-				else if(handValue == dealerValue){
-					//return to the stake what was already taken form it; essentially a push
-					player.addToStake(hand.getAmountBet());
-					winLoseOutcome = Hand.HAND_OUTCOME.PUSH;
-				}
-				else {
-					//win (original amount + win)
-					player.addToStake(hand.getAmountWon());
-					winLoseOutcome = Hand.HAND_OUTCOME.WIN;
-				}
-			}
-			hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-			hand.setHandOutcome(winLoseOutcome);
-		
+			currentHand = null; //we're done with playing this hand
 			
+//			
+				
 			break;
 		case HIT:
-
-			hand.addCard();
-			int handValue = hand.getValue(); 
-			
-			if(handValue > 21){
-				//automatic loss, do nothing, value is already removed from stake
-				hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
+			currentHand.addCard(game.dealCard());
+			if(currentHand.getCurrentPoints() > 21 || currentHand.getCurrentPoints() == 21){
+				currentHand = null; //we're done with playing this hand
 			}
-			else if(handValue == 21){
-				//either win or push, compare to dealer
-				int dealerValue = game.getDealersHandValue();
-				if(dealerValue == 21){ //push
-					player.addToStake(hand.getAmountBet());
-					hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-					hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
+			else{
+				// do nothing; leave currentHand != null, which means will keep playing this hand
+			}
+			
 
 					
-				}
-				else{ //win
-					player.addToStake(hand.getAmountWon());
-					hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-					hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
-				}
-				
-			}
-			else {
-				//keep going
-				hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_NOT_RESOLVED);
-			}
-		
 			break;
 		case DOUBLE:
-			int amountBet = hand.getAmountBet();
-			hand.setAmountBet(2*amountBet);
-			player.addToStake(-amountBet);
-			hand.addCard();
-			Offer.STAND.execute(hand, player, game);
+			// take just one more card and double the amount bet
+			currentHand.addCard(game.dealCard());
+			BigDecimal amountBet = currentHand.getAmountBet();
+			currentHand.setAmountBet(amountBet.multiply(BigDecimal.valueOf(2)));
+			game.subtractMoney(amountBet);
+			currentHand = null; //we're done with playing this hand
 			break;
 		
 		case SPLIT:
-
-			hand.split();
-			hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_NOT_RESOLVED_AND_SPLIT);
-			player.addToStake(hand.getHandAddedBySplit().getAmountBet());
-		
+			Hand newHand = currentHand.split(game.dealCard(), game.dealCard());
+			game.subtractMoney(newHand.getAmountBet());
+			hands.add(newHand);						
 		}	
 		
 	}
@@ -215,8 +169,12 @@ public class Round {
 		return offers;
 	}
 	private int calculateDealersHandPoints(){
+		if(dealerHand.cards.size() == 1){ //dealer might have already received 2nd card if there was insurance but otherwise only has 1 still
+			dealerHand.addCard(game.dealCard());
+		}
+		
 		if(dealerHand.finalPoints != null){ 
-			// dealer's value already revealed
+			// dealer's value already revealed, so do nothing
 		}
 		else if(dealerHand.getCurrentPoints() > 16){
 			dealerHand.finalPoints = dealerHand.getCurrentPoints();
@@ -236,116 +194,52 @@ public class Round {
 		return dealerHand.finalPoints;
 		
 	}
-	
-	/*
-	 * 
-	SPLIT {
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			hand.split();
-			hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_NOT_RESOLVED_AND_SPLIT);
-			player.addToStake(hand.getHandAddedBySplit().getAmountBet());
-		}
-	},
-	STAND {
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			int handValue = hand.getValue();
-			Hand.HAND_OUTCOME winLoseOutcome = null;  
-			if(handValue > 21){
-				//automatic loss, do nothing, value is already removed from stake
-				winLoseOutcome = Hand.HAND_OUTCOME.LOSS;
-			}
-			else {
-				//compare to dealer's hand
-				int dealerValue = game.getDealersHandValue();
-				if (handValue < dealerValue){
-					//loss, do nothing, valuei is alreayd removed from stake
-					winLoseOutcome = Hand.HAND_OUTCOME.LOSS;
-				}
-				else if(handValue == dealerValue){
-					//return to the stake what was already taken form it; essentially a push
-					player.addToStake(hand.getAmountBet());
-					winLoseOutcome = Hand.HAND_OUTCOME.PUSH;
-				}
-				else {
-					//win (original amount + win)
-					player.addToStake(hand.getAmountWon());
-					winLoseOutcome = Hand.HAND_OUTCOME.WIN;
-				}
-			}
-			hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-			hand.setHandOutcome(winLoseOutcome);
-		}
-	}
- 
-	, HIT {
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			hand.addCard();
-			int handValue = hand.getValue(); 
-			
-			if(handValue > 21){
-				//automatic loss, do nothing, value is already removed from stake
-				hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
-			}
-			else if(handValue == 21){
-				//either win or push, compare to dealer
-				int dealerValue = game.getDealersHandValue();
-				if(dealerValue == 21){ //push
-					player.addToStake(hand.getAmountBet());
-					hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-					hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
+	//todo next: test basic playing sequeunce, figure out how to show the interactive player results to user
+	private void compareToDealerHandAndAdjustMoney(Hand hand){
+		// 
 
-					
-				}
-				else{ //win
-					player.addToStake(hand.getAmountWon());
-					hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_RESOLVED);
-					hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
-				}
-				
+		if(hand.getCurrentPoints() > 21){ //automatic loss
+			// mark as lost, 0 points
+			hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
+			hand.finalPoints = 0;
+		}
+		
+		
+		// compare to dealer's hand, mark as won or push, adjust money
+		else {//compare to dealer's hand
+			if (hand.getCurrentPoints() < calculateDealersHandPoints()){
+				//loss, do nothing, value is alredy removed from stake
+				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
+				hand.finalPoints = 0;
+			}
+			else if(hand.getCurrentPoints() == calculateDealersHandPoints()){
+				//return to the stake what was already taken form it; essentially a push
+				hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
+				hand.finalPoints = hand.getCurrentPoints();
+				game.addMoney(hand.getAmountBet());
 			}
 			else {
-				//keep going
-				hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_NOT_RESOLVED);
+				//win (original amount + win)
+				hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
+				hand.finalPoints = hand.getCurrentPoints();
+				game.addMoney(hand.getAmountToBeWon());
 			}
 		}
-	}
-	 
-	, DOUBLE {
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			int amountBet = hand.getAmountBet();
-			hand.setAmountBet(2*amountBet);
-			player.addToStake(-amountBet);
-			hand.addCard();
-			Offer.STAND.execute(hand, player, game);
-		}
-	}
-	 
-	, ACCEPT_INSURANCE {
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			player.addToStake(-hand.getInsuranceAmountBet());
-			hand.setInsured(true);
-			hand.setHandResolutionStatus(Hand.HAND_RESOLUTION_STATUS.HAND_NOT_RESOLVED);
-		}
-	} 
-	
-	, DECLINE_INSURANCE{
-		public void execute(Hand hand, Player player, BlackJackGameSession game){
-			// do nothing
-		}
+		
 	}
 	
+		
 	
-	;
 	
 	
+}
 //todo basic: automatic win when the hand is 21 - don't ask for player's response. 	
 		
-	public abstract void execute(Hand hand, Player player, BlackJackGameSession game);
+	
 		
 	
 
-	 */
+	 
 	 
 
-}
+
