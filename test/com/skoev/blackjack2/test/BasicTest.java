@@ -18,7 +18,7 @@ public class BasicTest {
 					public int nextInt() {
 						return 1;
 				}});
-		Game game = new Game(new PlayingStrategy(), testDeck);
+		Game game = new Game(new PlayingStrategyInteractive(), testDeck);
 		do {
 			game.playGame();
 		}

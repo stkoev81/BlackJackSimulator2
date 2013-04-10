@@ -14,7 +14,6 @@ import java.util.Stack;
 
 /**
  * todo basic: finish the methods already started
- * todo next: copy exitisting functionality over from other game that can be copied. 
  * @author stefan.t.koev
  *
  */
@@ -34,6 +33,7 @@ public class Round {
 	 */
 	public Round(Game game) {
 		this.game = game;
+		this.moneyStart = game.moneyCurrent;
 	}
 	public enum RoundStatus{
 		HAND_BEING_DEALT, HAND_BEING_INSURED, HANDS_BEING_PLAYED_OUT, HANDS_BEING_COMPARED_TO_DEALERS_HAND, ROUND_FINISHED;
@@ -55,15 +55,16 @@ public class Round {
 			roundStatus = RoundStatus.HAND_BEING_INSURED;
 		case HAND_BEING_INSURED: 
 			Offer playerResponse = null;
-			Collection<Offer> offers = getAvailableOffers(hands.get(0), true);
+			currentHand = hands.get(0);
+			Collection<Offer> offers = getAvailableOffers(currentHand, true);
 			if(offers.size() > 0 ){
-				playerResponse = playingStrategy.respondToOffer();
+				playerResponse = playingStrategy.respondToOffer(offers, currentHand, dealerHand);
 				if(playerResponse == null){
 					game.userInputNeeded = true;
 					return;
 				}
 			}
-			currentHand = hands.get(0);
+			
 			applyOffer(playerResponse);	
 			currentHand = null;
 			handsToProcess.addAll(hands);
@@ -75,7 +76,8 @@ public class Round {
 					currentHand = handsToProcess.remove();
 				}
 				playerResponse = null;
-				playerResponse = playingStrategy.respondToOffer();
+				offers = getAvailableOffers(currentHand, false);
+				playerResponse = playingStrategy.respondToOffer(offers, currentHand, dealerHand);
 				if(playerResponse == null){
 					game.userInputNeeded = true;
 					return;
@@ -91,6 +93,7 @@ public class Round {
 				compareToDealerHandAndAdjustMoney(hand);
 			}
 			roundStatus = RoundStatus.ROUND_FINISHED;
+			moneyEnd = game.moneyCurrent;
 		}
 		game.userInputNeeded = false;
 	}
@@ -98,6 +101,10 @@ public class Round {
 	
 	
 	private void applyOffer(Offer offer){
+		if(offer == null){
+			return;
+		}
+		
 		switch(offer){
 		case ACCEPT_INSURANCE:
 			
@@ -194,7 +201,6 @@ public class Round {
 		return dealerHand.finalPoints;
 		
 	}
-	//todo next: test basic playing sequeunce, figure out how to show the interactive player results to user
 	private void compareToDealerHandAndAdjustMoney(Hand hand){
 		// 
 

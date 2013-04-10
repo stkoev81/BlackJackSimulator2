@@ -1,6 +1,7 @@
 package com.skoev.blackjack2.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 /**
@@ -16,8 +17,8 @@ public class Game {
 	public int numRoundsToPlay = 100; 
 	public BigDecimal moneyCurrent = BigDecimal.valueOf(100);
 	public Round currentRound;
-	public Collection<Round> pastRounds = Collections.EMPTY_LIST;
-	public PlayingStrategy playingStrategy = new PlayingStrategy();
+	public Collection<Round> pastRounds = new ArrayList();
+	public PlayingStrategy playingStrategy;
 	public Deck deck = new Deck();
 	public boolean userInputNeeded = false;
 	
@@ -36,9 +37,10 @@ public class Game {
 			}
 			currentRound.playRound(playingStrategy);
 			if(!userInputNeeded){
+				pastRounds.add(currentRound);
 				currentRound = null; //round is finished
 				numRoundsPlayed ++;
-				pastRounds.add(currentRound);
+				
 			}
 		}
 	}

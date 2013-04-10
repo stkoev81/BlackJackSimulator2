@@ -1,21 +1,14 @@
 package com.skoev.blackjack2.model;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
-/**
- * todo normal - create a hierarchy of this forseveral types of palying strategies
- * 
- * @author stefan.t.koev
- *
- */
-public class PlayingStrategy {
-	public BigDecimal amountBet;
-	public Round.Offer responseToOffer;
+public interface PlayingStrategy {
+
+	 BigDecimal respondToAmountBet();
+
+	 Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
 	
-	public BigDecimal respondToAmountBet(){
-		return amountBet;
-	}
-	public Round.Offer respondToOffer(){
-		return responseToOffer;
-	}
+	 boolean isInteractive();
+
 }
