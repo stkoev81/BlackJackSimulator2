@@ -8,24 +8,26 @@ import java.util.List;
 
 /**
  * 
- * - todo normal: add the methods to hand 
+ * todo normal: add filelds to show whether there was any doubling involved (e.g. initial bet, final bet). Also add fields to keep track of whether the hand is insured and whether the insurance is lost or won.  
+ * todo normla: no need for hand history because when you see the final hand, you know pretty much the history (except for insurance and doubling). Stand, split, hit are pretty obvious. 
+ * 
  * @author stefan.t.koev
  *
  */
 public class Hand {
+	public int handNumber;
 	public BigDecimal amountBet;
 	public List<HandHistory> handHistory = Collections.EMPTY_LIST;
 	public List<Card> cards = Collections.EMPTY_LIST;
 	public Integer finalPoints;
-	
 
 	private HAND_OUTCOME handOutcome = null; 
 	
-	
 	public enum HAND_OUTCOME{WIN, LOSS, PUSH}
 	
-	public Hand(BigDecimal amountBet, Card ...cardsToAdd){
+	public Hand(BigDecimal amountBet, int handNumber, Card ...cardsToAdd){
 		this.amountBet = amountBet;
+		this.handNumber = handNumber;
 		cards = new ArrayList<Card>();
 		for(Card card : cardsToAdd){
 			cards.add(card);
@@ -78,13 +80,13 @@ public class Hand {
 	 * Modifies this hand and returns new hand. The cards parameters passed in are used to complete two resulting hands. 
 	 * @return
 	 */
-	public Hand split(Card card1, Card card2){
+	public Hand split(Card card1, Card card2, int handNumber){
 		if(!isEligibleForSplit()){
 			throw new RuntimeException("Splitting is not allowed for this hand");
 		}
 		
 		Hand hand1 = this; 
-		Hand hand2 = new Hand(amountBet, card1, card2);
+		Hand hand2 = new Hand(amountBet, handNumber, card1, card2);
 		Card hand1Card2 = hand1.cards.get(1);
 		// hand 1 is card one from original hand with a new card
 		hand1.cards.set(1, hand2.cards.get(0));
@@ -97,8 +99,6 @@ public class Hand {
 		cards.add(card);
 	}
 
-
-	
 	public BigDecimal getAmountBet(){
 		return amountBet;
 	}
@@ -107,7 +107,6 @@ public class Hand {
 		this.amountBet = amountBet;
 	}
 
-	// todo normal check how to do the big decimal math
 	public BigDecimal getAmountToBeWon(){
 		double amountBetDouble = amountBet.doubleValue();
 		BigDecimal result; 
@@ -133,19 +132,45 @@ public class Hand {
 		result = result.add(getInsureanceAmountBet());
 		return result;
 	}
-	
-	@Override
-	public String toString() {
-		String result = "";
-		for(Card card: cards){
-			result = result + card;
-		}
-		return result;
-	}
-	
 
 	public HAND_OUTCOME getHandOutcome() {
 		return handOutcome;
+	}
+
+	
+	// todo normal: if handOutcome or amount bet or final points is null (e.g. dealer's hand), dont print it). 
+	@Override
+	public String toString() {
+		String cardsString = "";
+		for(Card card: cards){
+			cardsString = cardsString + card;
+		}
+	
+		
+		
+		
+		if(handNumber != 0){		
+			return "Player hand " + handNumber + ": amountBet=" + amountBet 
+				+ ", cards=" + cardsString
+				+ ", finalPoints=" + finalPoints
+				+ ", handOutcome=" + handOutcome + "\n";
+		}
+		else{
+			if(finalPoints != null){
+				return "Dealer hand:"  
+						+ " cards=" + cardsString
+						+ ", finalPoints=" + finalPoints + "\n";
+			}
+			else{
+				return "Dealer hand:"  
+						+ " cards=" + cardsString
+						+ "\n";
+			}
+			
+		}
+		
+		
+		
 	}
 
 	public void setHandOutcome(HAND_OUTCOME handOutcome) {

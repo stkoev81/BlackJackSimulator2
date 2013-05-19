@@ -9,13 +9,13 @@ import java.util.Random;
 
 
 /**
- * todo normal - add the constructors and attributes
+ * 
  * @author stefan.t.koev
  *
  */
 public class Deck {
 	private Random ng; 
-	private List<Card> cards;
+	protected List<Card> cards;
 	public Deck(){
 		this.ng = new Random();
 		cards = getStandardDeckCards();
@@ -49,6 +49,17 @@ public class Deck {
 		}
 		return result;
 	}
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder("Deck");
+		
+		for (Card card : cards){
+			result.append(card.toString());
+		}
+		return result.toString();
+	}
+	
+	
 }
 
 

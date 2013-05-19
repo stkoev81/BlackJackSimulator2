@@ -10,5 +10,7 @@ public interface PlayingStrategy {
 	 Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
 	
 	 boolean isInteractive();
+	 
+	 
 
 }

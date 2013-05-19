@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Observable;
 
 import com.skoev.blackjack2.model.*;
-
+import com.skoev.blackjack2.view.*;
 
 
 public class GameController {
@@ -15,28 +15,47 @@ public class GameController {
 	}
 		
 	public void playSingleGame(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, BigDecimal.valueOf(1), true);
+//		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, BigDecimal.valueOf(1), false);
+		PlayingStrategy playingStrategy = new PlayingStrategyInteractive();
 		Game game = new Game(playingStrategy, new Deck());
 		do {
 			game.playGame();
-			//e.g. previous Hands, previous results. 
+			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only).
+      
+			//	interactive case, game not finished
+			if(playingStrategy instanceof PlayingStrategyInteractive && game.userInputNeeded){
+				PlayingStrategyInteractive interactive = (PlayingStrategyInteractive) playingStrategy;
+				Round round = game.currentRound;
+				if(Round.RoundStatus.HAND_BEING_DEALT.equals(round.roundStatus)){
+					int n = game.pastRounds.size();
+					if( n > 0){
+						Round previousRound = game.pastRounds.get(n-1);
+						GameView.printRound(previousRound);
+					}
+					interactive.amountBet = GameView.getAmountBet(game.gameID, game.currentRound.roundNumber);
+				}
+				else{
+					interactive.responseToOffer = GameView.getResponseToOffer(round.availableOffers, round.dealerHand, round.currentHand);
+				}
+			}
 			
-			//if user input Neede (or if playing strategy is intractive), print message prompting to enter input (how do you know what type of input is needed? -- see round state )
-			// if it is a bet amound needed, include in prompt the current stake, etc.; but first, show the conclusion of the previous round, if any. When do you show the 
-			// outcome of the last round? - no user input is neede there, so how would you know if it's a case of interactive or automated? Maybe if PlayingStrategy.isInteractive?
-			// if it is an insurance needed, include in the prompt the dealer's card and current hand
-			// if it is an offer reposnse needed, include the current hand dealt and the possible options. 
-			//read in that input
-			//set the response in the playing strategy
+			// interactive case, game finished
+			if(playingStrategy instanceof PlayingStrategyInteractive && !game.userInputNeeded){
+				int n = game.pastRounds.size();
+				GameView.printRound(game.pastRounds.get(n-1));
+			}
 			
-			
-			//if playing strategy is not interactive and uesr input is needed, throw exception.
-			
-			//if user input is not needed, this implies that the simulation is finished. Print everthing to date -- all rounds, all hands, all hands history.
-			// todo next: do this part because it seem simpler; for the user input needed case, you need to keep track of what you showed. Will need to write a predictable player for this one first so it can buidl up some history.
-			// need to add constructors everywhere to initizlize things properly, populate the historic datastructures properly, and then build to string methods or view method to display them. 
+			//	non-interactive case, game finished
+			if(!(playingStrategy instanceof PlayingStrategyInteractive)){
+				GameView.printGame(game);
+			}
+			//	todo next: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
+			//todo after: create the views for the user returning to the game 
+			// todo after: implement the other automated playing strategies; some tests
 		}
 		while(game.userInputNeeded);
+		
+		
 	}
 			
 }

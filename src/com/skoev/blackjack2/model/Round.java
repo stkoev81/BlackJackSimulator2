@@ -9,15 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.Collections;
 
 
 
 /**
- * todo basic: finish the methods already started
  * @author stefan.t.koev
  *
  */
 public class Round {
+	public int roundNumber;
 	public BigDecimal moneyStart = BigDecimal.valueOf(100);
 	public BigDecimal moneyEnd = BigDecimal.valueOf(10);
 	public RoundStatus roundStatus = RoundStatus.HAND_BEING_DEALT;
@@ -26,6 +27,7 @@ public class Round {
 	public Hand dealerHand;
 	private Queue<Hand> handsToProcess = new LinkedList<Hand>();
 	public Hand currentHand = null;
+	public List<Offer> availableOffers = Collections.EMPTY_LIST;
 	
 		
 	/**
@@ -41,7 +43,6 @@ public class Round {
 	public enum Offer{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
-	
 	public void playRound(PlayingStrategy playingStrategy){
 		switch(roundStatus){
 		case HAND_BEING_DEALT: 
@@ -50,15 +51,15 @@ public class Round {
 				game.userInputNeeded = true;
 				return;
 			}
-			hands.add(new Hand(betAmount, game.dealCard(), game.dealCard()));
-			dealerHand = new Hand(null, game.dealCard());
+			hands.add(new Hand(betAmount, 1, game.dealCard(), game.dealCard()));
+			dealerHand = new Hand(null, 0, game.dealCard());
 			roundStatus = RoundStatus.HAND_BEING_INSURED;
 		case HAND_BEING_INSURED: 
 			Offer playerResponse = null;
 			currentHand = hands.get(0);
-			Collection<Offer> offers = getAvailableOffers(currentHand, true);
-			if(offers.size() > 0 ){
-				playerResponse = playingStrategy.respondToOffer(offers, currentHand, dealerHand);
+			availableOffers = getAvailableOffers(currentHand, true);
+			if(availableOffers.size() > 0 ){
+				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
 					game.userInputNeeded = true;
 					return;
@@ -76,8 +77,8 @@ public class Round {
 					currentHand = handsToProcess.remove();
 				}
 				playerResponse = null;
-				offers = getAvailableOffers(currentHand, false);
-				playerResponse = playingStrategy.respondToOffer(offers, currentHand, dealerHand);
+				availableOffers = getAvailableOffers(currentHand, false);
+				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
 					game.userInputNeeded = true;
 					return;
@@ -97,9 +98,6 @@ public class Round {
 		}
 		game.userInputNeeded = false;
 	}
-	
-	
-	
 	private void applyOffer(Offer offer){
 		if(offer == null){
 			return;
@@ -149,16 +147,14 @@ public class Round {
 			break;
 		
 		case SPLIT:
-			Hand newHand = currentHand.split(game.dealCard(), game.dealCard());
+			Hand newHand = currentHand.split(game.dealCard(), game.dealCard(), hands.size() + 1);
 			game.subtractMoney(newHand.getAmountBet());
 			hands.add(newHand);						
 		}	
 		
 	}
-	
-	
-	private Collection<Offer> getAvailableOffers(Hand hand, boolean insuranceOffers){
-		Collection<Offer> offers = new LinkedHashSet<Offer>();
+	private List<Offer> getAvailableOffers(Hand hand, boolean insuranceOffers){
+		List<Offer> offers = new LinkedList<Offer>();
 		if(insuranceOffers){
 			if (dealerHand.firstCardIsAce() ){
 				offers.add(Offer.ACCEPT_INSURANCE);
@@ -233,6 +229,12 @@ public class Round {
 		}
 		
 	}
+	@Override
+	public String toString() {
+		return "-----Round "+ roundNumber+ " results-----\nmoneyStart=" + moneyStart + ", moneyEnd=" + moneyEnd
+				+ ", roundStatus=" + roundStatus + "\n" + Util.toCollString("", hands, "") + dealerHand + "------------";
+	}
+	
 	
 		
 	

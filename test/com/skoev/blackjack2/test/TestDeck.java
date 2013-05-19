@@ -16,7 +16,6 @@ import com.skoev.blackjack2.model.*;
  *
  */
 public class TestDeck extends Deck {
-	private List<Card> cards;
 	private Iterator<Card> it;
 	
 	public TestDeck(Rank[] ranks){

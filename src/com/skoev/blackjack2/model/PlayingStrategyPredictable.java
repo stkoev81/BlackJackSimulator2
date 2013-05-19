@@ -45,6 +45,14 @@ public class PlayingStrategyPredictable implements PlayingStrategy {
 	public boolean isInteractive() {
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "PlayingStrategyPredictable [defaultOffer=" + defaultOffer
+				+ ", defaultBet=" + defaultBet + ", acceptInsurace="
+				+ acceptInsurace + "]";
+	}
+	
 	
 
 }

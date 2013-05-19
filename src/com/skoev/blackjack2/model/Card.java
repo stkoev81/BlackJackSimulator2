@@ -3,7 +3,7 @@ package com.skoev.blackjack2.model;
 
 /**
  * 
- * -todo normal: add the cards attributes, methods to get value
+ * 
  * 
  * @author stefan.t.koev
  *

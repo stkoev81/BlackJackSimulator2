@@ -22,11 +22,17 @@ public class PlayingStrategyInteractive implements PlayingStrategy {
 	@Override
 	public Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand){
 		Round.Offer result = responseToOffer;
+    responseToOffer = null;
 		return result;
 	}
 	@Override
 	public boolean isInteractive() {
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "PlayingStrategyInteractive";
+	}
+	
 	
 }
