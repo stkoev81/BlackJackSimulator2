@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.model;
+package com.skoev.blackjack2.model.game;
 
 import java.util.Collection;
 

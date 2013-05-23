@@ -1,9 +1,9 @@
-package com.skoev.blackjack2.model;
+package com.skoev.blackjack2.model.game;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import com.skoev.blackjack2.model.Round.Offer;
+import com.skoev.blackjack2.model.game.Round.Offer;
 
 public class PlayingStrategyPredictable implements PlayingStrategy {
 	private Round.Offer defaultOffer;

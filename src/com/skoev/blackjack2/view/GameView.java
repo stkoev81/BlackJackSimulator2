@@ -1,6 +1,7 @@
 package com.skoev.blackjack2.view;
 
-import com.skoev.blackjack2.model.*;
+import com.skoev.blackjack2.controller.GameController;
+import com.skoev.blackjack2.model.game.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +20,41 @@ public class GameView {
 	
 	public static PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.HIT, BigDecimal.valueOf(1), false);
 
+	public static GameController.Option getStartScreenInput(){
+		GameController.Option result = null;
+		return result;
+	}
+	
+	public static String[] getLoginInput(){
+		String[] login = new String[2];
+		return login;
+	}
+	
+	public static String[] getCreateAccountInput(){
+		String[] login = new String[2];
+		return login;
+	}
+	
+	public static GameController.Option getHomeScreenInput(){
+		GameController.Option result = null;
+		return result;
+	}
+	
+	public static int getWhichGameInput(){
+		int i = 0; 
+		return i; 
+	}
+	
+	public static GameController.Option getGameDetailsInput(){ //delete game, continue game, return to home screen
+		GameController.Option result = null;
+		return result;
+	}
+	
+	public static Game getNewGameInput(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	
+	
 	public static Round.Offer getResponseToOffer(List<Round.Offer> availableOffers, Hand dealerHand, Hand currentHand){
 		//todo basic: print the dealer's hand and the current hand;
 		System.out.println("User input needed for the following hand: ");
@@ -99,5 +135,10 @@ public class GameView {
 			return false;
 		}
 	}
+	
+	public static void printMessage(String message){
+		System.out.println(message);
+	}
+	
 	
 }

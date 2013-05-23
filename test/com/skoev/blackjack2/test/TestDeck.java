@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import com.skoev.blackjack2.model.*;
+import com.skoev.blackjack2.model.game.*;
 
 
 /**

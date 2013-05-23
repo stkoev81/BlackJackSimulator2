@@ -3,7 +3,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.skoev.blackjack2.model.*;
+import com.skoev.blackjack2.model.game.*;
+
 import java.util.Random;
 
 
