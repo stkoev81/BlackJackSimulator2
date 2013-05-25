@@ -10,17 +10,14 @@ import com.skoev.blackjack2.model.game.*;
  */
 public class AccountService {
 	//User logIn(String username, String password);
-	public static boolean authenticateUser(String username, String password){
-		return true;
+	public static User authenticateUser(String username, String password){
+		return null;
 	}
-	public static boolean createNewUser(String username, String password){
-		return true;
+	public static User createNewUser(String username, String password){
+		return null;
 	}
-	public static void deleteGame(String username, int gameId){
-		
-	}
-	public static Game getGame(String username, int gameId){
-		return null; 
-	}
+	
+	
+
 
 }

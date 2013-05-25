@@ -6,21 +6,15 @@ import com.skoev.blackjack2.model.game.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 //todo normal: refactor all the methods getting user response to use common code 
-public class GameView {
-	private static BufferedReader br; 
+public class GameView extends GameViewGeneral{
 	
-	static {
-		//It's OK to leave this buffered reader open because the underlying stream, System.in, is always open anyway.
-		br = new BufferedReader(new InputStreamReader(System.in));
-	}
-	
-	public static PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.HIT, BigDecimal.valueOf(1), false);
-
-	public static GameController.Option getStartScreenInput(){
+	public static GameController.Option getStartApplicationInput(){
 		GameController.Option result = null;
 		return result;
 	}
@@ -35,26 +29,44 @@ public class GameView {
 		return login;
 	}
 	
-	public static GameController.Option getHomeScreenInput(){
+	public static GameController.Option getGoToHomeScreenInput(){
 		GameController.Option result = null;
 		return result;
 	}
 	
-	public static int getWhichGameInput(){
+	public static int getGoToHomeScreenInputWhichGame(){
 		int i = 0; 
 		return i; 
 	}
 	
-	public static GameController.Option getGameDetailsInput(){ //delete game, continue game, return to home screen
+	public static GameController.Option getViewGameDetailsInput(){ //delete game, continue game, return to home screen
 		GameController.Option result = null;
 		return result;
 	}
 	
-	public static Game getNewGameInput(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+	public static Game getStartNewGameInputPlayerType(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	
+	public static Game getStartNewGameInputMoneyStart(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	public static Game getStartNewGameInputNumRounds(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	public static Game getStartNewGameInputDefaultOffer(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	public static Game getStartNewGameInputAcceptInsurance(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
+		return null;
+	}
+	public static Game getStartNewGameInputDefaultBet(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
 		return null;
 	}
 	
 	
+	
+
 	public static Round.Offer getResponseToOffer(List<Round.Offer> availableOffers, Hand dealerHand, Hand currentHand){
 		//todo basic: print the dealer's hand and the current hand;
 		System.out.println("User input needed for the following hand: ");
@@ -71,7 +83,7 @@ public class GameView {
 		Round.Offer result = null;
 		while(result == null){
 			try{
-				String response = br.readLine();
+				String response = in.readLine();
 				if (isEmptyResponse(response)){
 					break;
 				}
@@ -99,7 +111,7 @@ public class GameView {
 		double result = 0;
 		while(result == 0){
 			try{
-				String response = br.readLine();
+				String response = in.readLine();
 				if (isEmptyResponse(response)){
 					break;
 				}
@@ -119,26 +131,8 @@ public class GameView {
 	}
 	//interactive.amountBet = GameView.getAmountBet();
 	
-	public static void printGame(Game game){
-		System.out.println(game);
-	}
+		
 	
-	public static void printRound(Round round){
-		System.out.println(round);
-	}
-	
-	private static boolean isEmptyResponse(String s){
-		if(s == null || s.length() == 0){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	
-	public static void printMessage(String message){
-		System.out.println(message);
-	}
 	
 	
 }
