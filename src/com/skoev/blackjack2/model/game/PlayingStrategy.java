@@ -3,13 +3,21 @@ package com.skoev.blackjack2.model.game;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-public interface PlayingStrategy {
+public abstract class PlayingStrategy {
 
-	 BigDecimal respondToAmountBet();
+	 abstract BigDecimal respondToAmountBet();
 
-	 Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
+	 abstract Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
 	
-	 boolean isInteractive();
+	 abstract boolean isInteractive();
+	 
+	 public void setAmountBet(BigDecimal amountBet) {
+		 throw new IllegalStateException();	 
+	 }
+
+	 public void setResponseToOffer(Round.Offer responseToOffer){
+		 throw new IllegalStateException();	 
+	 }
 	 
 	 
 

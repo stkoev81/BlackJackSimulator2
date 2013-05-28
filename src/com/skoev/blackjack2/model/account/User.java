@@ -16,5 +16,16 @@ public class User {
 	public Game getGame(int gameId){
 		return null; 
 	}
+	
+	public void addNewGame(Game game){
+		
+	}
 
 }
+
+//todo next: enter the ability to cancel by entering an empty input
+// add validation to "which game number"
+//add games with default options. 
+//enter the game summary view
+//modify the user repository to save the old stuff
+

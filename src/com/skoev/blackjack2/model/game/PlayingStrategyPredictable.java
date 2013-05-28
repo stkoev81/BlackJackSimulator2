@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import com.skoev.blackjack2.model.game.Round.Offer;
 
-public class PlayingStrategyPredictable implements PlayingStrategy {
+public class PlayingStrategyPredictable extends PlayingStrategy {
 	private Round.Offer defaultOffer;
 	private BigDecimal defaultBet;
 	private boolean acceptInsurace; 

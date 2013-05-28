@@ -11,10 +11,10 @@ import com.skoev.blackjack2.model.game.*;
 public class AccountService {
 	//User logIn(String username, String password);
 	public static User authenticateUser(String username, String password){
-		return null;
+		return new User();
 	}
 	public static User createNewUser(String username, String password){
-		return null;
+		return new User();
 	}
 	
 	

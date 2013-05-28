@@ -14,22 +14,30 @@ import java.util.List;
  */
 public class Game {
 	public int gameID = 1; 
-	public int numRoundsPlayed = 0;
-	public int numRoundsToPlay = 5;
-	public BigDecimal moneyStart = BigDecimal.valueOf(100);
-	public BigDecimal moneyCurrent = BigDecimal.valueOf(100);
+	public int numRoundsPlayed; 
+	public int numRoundsToPlay; 
+	public BigDecimal moneyStart;
+	public BigDecimal moneyCurrent;
 	public Round currentRound;
 	public List<Round> pastRounds = new ArrayList();
 	public PlayingStrategy playingStrategy;
 	public Deck deck = new Deck();
 	public boolean userInputNeeded = false;
 	
-	public Game(PlayingStrategy playingStrategy, Deck deck){
-		this.playingStrategy = playingStrategy;
-		this.deck = deck;
+	public boolean isInteractive(){
+		return playingStrategy.isInteractive();
 	}
 	
-	public void playGame(){
+	public Game(PlayingStrategy playingStrategy, int numRoundsToPlay, BigDecimal moneyStart){
+		this.moneyStart = moneyStart;
+		this.moneyCurrent = moneyStart;
+		this.playingStrategy = playingStrategy;
+		this.numRoundsToPlay = numRoundsToPlay;
+	}
+	
+	
+	
+	public void play(){
 		if (isFinished()){
 			throw new RuntimeException("this game is already finished. Cannot continue playing");
 		}
@@ -39,7 +47,7 @@ public class Game {
 				currentRound = new Round(this);
 				currentRound.roundNumber = numRoundsPlayed +1;
 			}
-			currentRound.playRound(playingStrategy);
+			currentRound.play(playingStrategy);
 			if(!userInputNeeded){
 				numRoundsPlayed ++;
 				pastRounds.add(currentRound);

@@ -14,125 +14,33 @@ import java.util.List;
 //todo normal: refactor all the methods getting user response to use common code 
 public class GameView extends GameViewGeneral{
 	
-	public static GameController.Option getStartApplicationInput(){
-		GameController.Option result = null;
-		return result;
-	}
-	
-	public static String[] getLoginInput(){
-		String[] login = new String[2];
-		return login;
-	}
-	
-	public static String[] getCreateAccountInput(){
-		String[] login = new String[2];
-		return login;
-	}
-	
-	public static GameController.Option getGoToHomeScreenInput(){
-		GameController.Option result = null;
-		return result;
-	}
-	
-	public static int getGoToHomeScreenInputWhichGame(){
-		int i = 0; 
-		return i; 
-	}
-	
-	public static GameController.Option getViewGameDetailsInput(){ //delete game, continue game, return to home screen
-		GameController.Option result = null;
-		return result;
-	}
-	
-	public static Game getStartNewGameInputPlayerType(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
-	
-	public static Game getStartNewGameInputMoneyStart(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
-	public static Game getStartNewGameInputNumRounds(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
-	public static Game getStartNewGameInputDefaultOffer(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
-	public static Game getStartNewGameInputAcceptInsurance(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
-	public static Game getStartNewGameInputDefaultBet(){ // strategy type, for each strategy various money settings, number of rounds, etc. 
-		return null;
-	}
 	
 	
 	
+	
+	public static void displayGameSummary(Collection<Game> games){
+		display("These are your games: ");
+	}
+	
+	public static void displayGameDetails(Game game){
+		display(game);
+	}
+	
+	public static void displayRoundDetails(Round round){
+		display(round);
+	}
+		
 
 	public static Round.Offer getResponseToOffer(List<Round.Offer> availableOffers, Hand dealerHand, Hand currentHand){
-		//todo basic: print the dealer's hand and the current hand;
-		System.out.println("User input needed for the following hand: ");
-		System.out.print("\t" + currentHand);
-		System.out.print("\t" + dealerHand);
-		System.out.println("Please choose one of the following offers by entering the number next to it:");
-		int i = 1; 
-		for(Round.Offer offer : availableOffers){
-			System.out.println("\t" + "(" + i + ")" + " " + offer);
-			i++;
-		}
-		
-		int offerNum = 0;
-		Round.Offer result = null;
-		while(result == null){
-			try{
-				String response = in.readLine();
-				if (isEmptyResponse(response)){
-					break;
-				}
-				offerNum = Integer.parseInt(response);
-				result = availableOffers.get(offerNum - 1);
-			}
-			catch(IOException e){
-				System.out.println("Error! : there was an unknown problem reading response. If problem persists, contact support. ");
-			}
-			catch(NumberFormatException e){
-				System.out.println("Error! : the response you entered was not formatted correclty. Must be an integer. Try again. ");
-			}
-			catch(java.lang.IndexOutOfBoundsException e ){
-				System.out.println("Error! : the number you entered is not a valid offer number. Try again. ");
-			}
-		}
-		return result;
-		
+		String message = "User input needed for the following hand: \n";
+		message += "\t" + currentHand + "\n";
+		message += "\t" + dealerHand + "\n";
+		return getOption(availableOffers.toArray(new Round.Offer[0]), message); 
 	}
-	//.responseToOffer = GameView.getResponseToOffer(round.availableOffers, round.dealerHand, round.currentHand);
 	
 	public static BigDecimal getAmountBet(int gameNumber, int roundNumber){
-		//todo basic: get the amount bet interactively
-		System.out.println("Starting game " + gameNumber + ", round " + roundNumber + ". Please enter bet amount.");
-		double result = 0;
-		while(result == 0){
-			try{
-				String response = in.readLine();
-				if (isEmptyResponse(response)){
-					break;
-				}
-				result = Double.parseDouble(response);
-				if (result <= 0){
-					throw new IllegalArgumentException();
-				}
-			}
-			catch(IOException e){
-				System.out.println("Error! : there was an unknown problem reading response. If problem persists, contact support. ");
-			}
-			catch(IllegalArgumentException e){
-				System.out.println("Error! : the response you entered is invalid. Must be > 0"); 
-			}
-		}
-		return BigDecimal.valueOf(result);
+		String message = "Starting game " + gameNumber + ", round " + roundNumber + ". Please enter bet amount." + "\n";
+		return getAmount(message);
 	}
-	//interactive.amountBet = GameView.getAmountBet();
-	
-		
-	
-	
 	
 }

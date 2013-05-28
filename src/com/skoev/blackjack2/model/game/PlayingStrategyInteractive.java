@@ -3,13 +3,15 @@ package com.skoev.blackjack2.model.game;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import com.skoev.blackjack2.model.game.Round.Offer;
+
 /**
  * todo normal - create a hierarchy of this forseveral types of palying strategies
  * 
  * @author stefan.t.koev
  *
  */
-public class PlayingStrategyInteractive implements PlayingStrategy {
+public class PlayingStrategyInteractive extends PlayingStrategy {
 	public BigDecimal amountBet;
 	public Round.Offer responseToOffer;
 	
@@ -33,6 +35,16 @@ public class PlayingStrategyInteractive implements PlayingStrategy {
 	public String toString() {
 		return "PlayingStrategyInteractive";
 	}
+	@Override
+	public void setAmountBet(BigDecimal amountBet) {
+		this.amountBet = amountBet;
+	}
+	@Override
+	public void setResponseToOffer(Offer responseToOffer) {
+		this.responseToOffer = responseToOffer;
+	}
+	
+	
 	
 	
 }

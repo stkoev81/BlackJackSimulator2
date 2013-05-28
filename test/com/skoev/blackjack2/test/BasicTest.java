@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import com.skoev.blackjack2.model.game.*;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 
@@ -19,9 +20,10 @@ public class BasicTest {
 					public int nextInt() {
 						return 1;
 				}});
-		Game game = new Game(new PlayingStrategyInteractive(), testDeck);
+		Game game = new Game(new PlayingStrategyInteractive(), 5, BigDecimal.valueOf(10));
+		game.deck  = testDeck;
 		do {
-			game.playGame();
+			game.play();
 		}
 		while(game.userInputNeeded);
 	}

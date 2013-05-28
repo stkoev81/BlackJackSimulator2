@@ -43,7 +43,7 @@ public class Round {
 	public enum Offer{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
-	public void playRound(PlayingStrategy playingStrategy){
+	public void play(PlayingStrategy playingStrategy){
 		switch(roundStatus){
 		case HAND_BEING_DEALT: 
 			BigDecimal betAmount = playingStrategy.respondToAmountBet();
