@@ -6,4 +6,5 @@ package com.skoev.blackjack2.model.account;
 public interface UserRepository {
 	User getUser(String username);
 	User createUser(String username, String password);
+	void saveUser(User user);
 }

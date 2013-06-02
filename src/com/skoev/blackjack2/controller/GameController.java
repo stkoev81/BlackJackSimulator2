@@ -21,7 +21,6 @@ public class GameController {
 	
 	private static enum Option{login, help, createAccount, startGame, exit, view_details, start_new, log_out, delete_game, continue_game, home_screen}
 	
-	//todo next: move this to the game itself; no mention here of class for playing strategy. The constructor of the game itself will choose the proper strategy. 
 	private static enum Strategy{interactive, predictable}
 	
 	public void startApplication(){
@@ -105,9 +104,6 @@ public class GameController {
 	}
 	
 	public void goToHomeScreen(){
-		
-		
-		
 		//if log out, exit;
 		//keep it an a loop so if these methods return you don't exit
 		//if play new game, new game screen
@@ -115,7 +111,7 @@ public class GameController {
 		boolean end = false;
 		while (!end){
 			try{
-				GameView.displayGameSummary(user.games);
+				GameView.displayGameSummary(user.getGames());
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
 				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
 				Option option = GameViewGeneral.getOption(options, message);
@@ -166,8 +162,6 @@ public class GameController {
 	}
 	
 	public void startNewGame(){
-		//todo next: construct a game based on user settings.
-		//todo next: enter some defaul values;
 		Strategy[] options = {Strategy.interactive, Strategy.predictable};
 		String message = "Choose a game type";
 		Strategy option = GameViewGeneral.getOption(options, message);

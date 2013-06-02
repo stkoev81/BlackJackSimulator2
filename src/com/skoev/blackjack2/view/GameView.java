@@ -20,6 +20,16 @@ public class GameView extends GameViewGeneral{
 	
 	public static void displayGameSummary(Collection<Game> games){
 		display("These are your games: ");
+		for(Game game : games){
+			displayGameSummary(game);
+		}
+	}
+	
+	//todo advanced: move the to_string methods of of the game and round here. Make the to_string methods instead simple and displaying just a summary. 
+	public static void displayGameSummary(Game game){
+		//todo normal : display the game summary such as: "game number, status - finished, not finished, waiting for user input, strategy. If finished, won or lost"
+		//todo basic: display the simplified game sumammary such as: game number
+		display(game.gameID);
 	}
 	
 	public static void displayGameDetails(Game game){

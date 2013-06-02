@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.skoev.blackjack2.controller.UserCanceledActionException;
 import com.skoev.blackjack2.model.game.Round;
@@ -48,6 +49,10 @@ public class GameViewGeneral {
 	}
 	
 	public static int getPositiveInteger(String message){
+		return getPositiveInteger(null, message);
+	}
+	
+	public static int getPositiveInteger(Set<Integer> allowedValues, String message){
 		out.println(message);
 		int result = 0;
 		while(result == 0){
@@ -58,6 +63,9 @@ public class GameViewGeneral {
 				if (result <= 0){
 					throw new IllegalArgumentException();
 				}
+				if(allowedValues != null && !allowedValues.contains(result)){
+					throw new IllegalArgumentException();
+				}
 			}
 			catch(IOException e){
 				out.println("Error! : there was an unknown problem reading response. If problem persists, contact support. ");
@@ -66,7 +74,11 @@ public class GameViewGeneral {
 				out.println("Error! : the response you entered was not formatted correclty. Must be an integer. Try again. ");
 			}
 			catch(IllegalArgumentException e){
-				out.println("Error! : the response you entered is invalid. Must be > 0"); 
+				out.println("Error! : the response you entered is invalid. Must be > 0. ");
+				if(allowedValues != null){
+					out.println("Must be within the follwoing values: " + allowedValues);	
+				}
+				
 			}
 		}
 		
