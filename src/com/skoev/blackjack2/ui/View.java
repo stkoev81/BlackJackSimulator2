@@ -1,6 +1,5 @@
-package com.skoev.blackjack2.view;
+package com.skoev.blackjack2.ui;
 
-import com.skoev.blackjack2.controller.GameController;
 import com.skoev.blackjack2.model.game.*;
 
 import java.io.BufferedReader;
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 //todo normal: refactor all the methods getting user response to use common code 
-public class GameView extends GameViewGeneral{
+public class View extends ViewGeneral{
 	
 	
 	

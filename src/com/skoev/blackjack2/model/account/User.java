@@ -15,31 +15,67 @@ public class User {
 		this.password = password;
 	}
 
-	public void deleteGame(int gameId){
-		
+	public boolean deleteGame(int gameId){
+		int i = getGameIndex(gameId);
+		if(i < 0){
+			return false;
+		}
+		else {
+			games.remove(i); 
+			return true;
+		}
 	}
 	
-	public Game getGame(int gameId){
+	private int getGameIndex(int gameId){
+		int i = 0;
 		for(Game game : games){
 			if(gameId == game.gameID){
-				return game;
+				return i;
+			}
+			i++; 
+		}
+		return -1; 
+	}
+	
+	private int getNextGameId(){
+		int id = 1;
+		for(Game game : games){
+			if(game.gameID > id){
+				id = game.gameID;
 			}
 		}
-		return null;
+		return id;
+	}
+	
+		
+	public Game getGame(int gameId){
+		int i = getGameIndex(gameId);
+		if(i < 0){
+			return null;
+		}
+		else{
+			return games.get(i);
+		}
 	}
 	//todo basic: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
 	public void addNewGame(Game game){
+		game.gameID = getNextGameId();
 		games.add(game);
 	}
 	
 	public Collection<Game> getGames(){
 		return games;
 	}
+	
+	public Collection<Integer> getGameIds(){
+		Collection<Integer> gameIds = new ArrayList<Integer>();
+		for(Game game : games){
+			gameIds.add(game.gameID);
+		}
+		return gameIds;
+	}
 
 }
 
-//todo next 3: add games with default options. 
 //todo next 1: modify the user repository to save the old stuff
-//todo next 1.1 : add Game Service in addition to account service. They will serve as facades that the controller calls. so controller doesn't need to know about playing the game. 
-//todo next 1.2 : figure out where you should save game automatically and where not. 
 

@@ -20,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository{
 	
 	private Map<String, User> users = new HashMap<String, User>();
 	
-	//todo basic: add validation and exceptions when users don't obey the rules.
+	//todo basic: add validation and exceptions when users don't obey the rules. But add that in the caller. 
 	//todo basic: make this thread safe either by choosing a thread safe collection or synchronizing on something. However, how do you handle the case where there needs to be transaction isolation? 
 	//todo advanced: make this support transactions -- making a backup object that is then restored if something goes wrong. Maybe make it support transactions api and locking api.
 	//todo advanced: there shoudl be commit transaction and the client should commit because it knows best what to do if things fail. 
@@ -31,14 +31,8 @@ public class UserRepositoryImpl implements UserRepository{
 	}
 
 	@Override
-	public User createUser(String username, String password) {
-		User user = new User(username, password);
-		return users.put(username, user);
-	}
-
-	@Override
 	public void saveUser(User user) {
-		
+		users.put(user.username, user);
 	}
 	
 	

@@ -1,7 +1,9 @@
-package com.skoev.blackjack2.model.account;
+package com.skoev.blackjack2.service;
 import java.io.ObjectInputStream.GetField;
 
 import com.skoev.blackjack2.infrastructure.*;
+import com.skoev.blackjack2.model.account.User;
+import com.skoev.blackjack2.model.account.UserRepository;
 import com.skoev.blackjack2.model.game.*;
 
 /**
@@ -10,7 +12,7 @@ import com.skoev.blackjack2.model.game.*;
  * @author stefan.t.koev
  *
  */
-public class AccountService {
+public class ApplicationService {
 	//User logIn(String username, String password);
 	//todo basic: add exceptions to the user authentication and creation
 	public static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
@@ -25,7 +27,8 @@ public class AccountService {
 		}
 	}
 	public static User createNewUser(String username, String password){
-		User user = userRepository.createUser(username, password);
+		User user = new User(username, password);
+		userRepository.saveUser(user);
 		return user;
 	}
 	
@@ -39,5 +42,13 @@ public class AccountService {
 		userRepository.saveUser(user);
 	}
 
+	public static void playGame(User user, Game game){
+		game.play();
+		userRepository.saveUser(user);
+	}
+	
+	public static Game getGame(int gameId, User user){
+		return user.getGame(gameId);
+	}
 
 }

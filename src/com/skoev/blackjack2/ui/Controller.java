@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.controller;
+package com.skoev.blackjack2.ui;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,15 +8,15 @@ import java.util.Observable;
 
 import com.skoev.blackjack2.model.account.*;
 import com.skoev.blackjack2.model.game.*;
-import com.skoev.blackjack2.view.*;
+import com.skoev.blackjack2.service.ApplicationService;
 
 
-public class GameController {
+public class Controller {
 	public User user; 
 	
 	public static void main(String[] args){
-		//new GameController().playSingleGame();
-		new GameController().startApplication();
+		//new GameController().playSingleGame(); 
+		new Controller().startApplication();
 	}
 	
 	private static enum Option{login, help, createAccount, startGame, exit, view_details, start_new, log_out, delete_game, continue_game, home_screen}
@@ -39,7 +39,7 @@ public class GameController {
 			try{ 
 				String message = "This is a blackjack simulation game.";
 				Option[] options = {Option.help, Option.login, Option.createAccount, Option.exit};
-				Option option = GameViewGeneral.getOption(options, message);
+				Option option = ViewGeneral.getOption(options, message);
 				switch (option){
 				case login : 
 					logIn();
@@ -63,19 +63,19 @@ public class GameController {
 	
 	public void showHelp(){
 		String message = "This is a blackjack game help"; 
-		GameViewGeneral.display(message);
+		ViewGeneral.display(message);
 	}
  
 	public void logIn(){
-			GameViewGeneral.display("Logging in with exising account. ");
-			String username = GameViewGeneral.getInput("Enter username: ");
-			String password = GameViewGeneral.getInput("Enter password: "); 
-			user = AccountService.authenticateUser(username, password); 
+			ViewGeneral.display("Logging in with exising account. ");
+			String username = ViewGeneral.getInput("Enter username: ");
+			String password = ViewGeneral.getInput("Enter password: "); 
+			user = ApplicationService.authenticateUser(username, password); 
 			if(user != null){
 				goToHomeScreen();
 			}
 			else{
-				GameViewGeneral.display("Invalid username/password.");
+				ViewGeneral.display("Invalid username/password.");
 		}
 	}
 	
@@ -83,22 +83,22 @@ public class GameController {
 		String username = null; 
 		String password = null; 
 		String password2 = null;
-		GameViewGeneral.display("Creating a new account. ");
+		ViewGeneral.display("Creating a new account. ");
 		while(password == null || !password.equals(password2)){
-			username  =  GameViewGeneral.getInput("Enter username: ");
-			password = GameViewGeneral.getInput("Enter password: "); 
-			password2 = GameViewGeneral.getInput("Re-enter password: ");
+			username  =  ViewGeneral.getInput("Enter username: ");
+			password = ViewGeneral.getInput("Enter password: "); 
+			password2 = ViewGeneral.getInput("Re-enter password: ");
 			if(!password.equals(password2)){
-				GameViewGeneral.display("Passwords don't match. Try again. "); 
+				ViewGeneral.display("Passwords don't match. Try again. "); 
 			}
 		}
-		user = AccountService.createNewUser(username, password); 
+		user = ApplicationService.createNewUser(username, password); 
 		if(user != null){
-			GameViewGeneral.display("Account created");
+			ViewGeneral.display("Account created");
 			goToHomeScreen();
 		}
 		else{ ////todo basic: check for exceptions why the account could not created. Using business rules. Print out the rules for passwords from the business layer.  
-			GameViewGeneral.display("Account could not be created");
+			ViewGeneral.display("Account could not be created");
 		}
 		
 	}
@@ -111,17 +111,18 @@ public class GameController {
 		boolean end = false;
 		while (!end){
 			try{
-				GameView.displayGameSummary(user.getGames());
+				View.displayGameSummary(user.getGames());
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
 				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
-				Option option = GameViewGeneral.getOption(options, message);
+				Option option = ViewGeneral.getOption(options, message);
 				switch(option){
 					case log_out:
 						end = true;
 						user = null;
 						break;
 					case view_details:
-						int whichGame = GameViewGeneral.getPositiveInteger("Which game number?");
+						//todo next: change this call to get one of a group of integers; if there is only one integer, then get the same game. //also if no games don't go to view game details, simply state there are not games. 
+						int whichGame = ViewGeneral.getPositiveInteger("Which game number?");
 						viewGameDetails(whichGame);	
 						break;
 					case start_new:
@@ -136,14 +137,14 @@ public class GameController {
 	} 
 	
 	public void viewGameDetails(int gameId){
-		Game game = user.getGame(gameId);
-		GameView.displayGameDetails(game);
+		Game game = ApplicationService.getGame(gameId, user);
+		View.displayGameDetails(game);
 		String message = "You can delete or continue (if incomplete) the game";
 		
 		//todo basic: check game for completenesss and don't allow to continue if it is complete
 		Option[] options = {Option.home_screen, Option.delete_game, Option.continue_game};
 		
-		Option option = GameViewGeneral.getOption(options, message);
+		Option option = ViewGeneral.getOption(options, message);
 		//if home screen, exit
 		//if delete game, do so using service
 		//if continue game, call playSingleGame
@@ -151,11 +152,11 @@ public class GameController {
 			case home_screen: 
 				break;
 			case delete_game:
-				user.deleteGame(0);
-				GameViewGeneral.display("Deleted game " + gameId);
+				ApplicationService.deleteGame(gameId, user);
+				ViewGeneral.display("Deleted game " + gameId);
 				break;
 			case continue_game:
-				GameViewGeneral.display("Continuing game " + gameId);
+				ViewGeneral.display("Continuing game " + gameId);
 				playGame(game); 
 				break;
 		}
@@ -164,11 +165,11 @@ public class GameController {
 	public void startNewGame(){
 		Strategy[] options = {Strategy.interactive, Strategy.predictable};
 		String message = "Choose a game type";
-		Strategy option = GameViewGeneral.getOption(options, message);
+		Strategy option = ViewGeneral.getOption(options, message);
 		
 		PlayingStrategy playingStrategy = null;
-		BigDecimal money = GameViewGeneral.getAmount("Enter starting money");
-		int numRounds = GameViewGeneral.getPositiveInteger("Enter number of rounds to play");
+		BigDecimal money = ViewGeneral.getAmount("Enter starting money");
+		int numRounds = ViewGeneral.getPositiveInteger("Enter number of rounds to play");
 		
 		if(option.equals(Strategy.interactive)){
 			playingStrategy = new PlayingStrategyInteractive();
@@ -176,15 +177,15 @@ public class GameController {
 		
 		if(option.equals(Strategy.predictable)){
 			message = "Accept insurance?";
-			Boolean acceptInsurance =  GameViewGeneral.getOption(new Boolean[]{Boolean.TRUE, Boolean.FALSE}, message);
+			Boolean acceptInsurance =  ViewGeneral.getOption(new Boolean[]{Boolean.TRUE, Boolean.FALSE}, message);
 			message = "Default response to offer?";
-			Round.Offer defaultOffer = GameViewGeneral.getOption(new Round.Offer[]{Round.Offer.STAND, Round.Offer.HIT, Round.Offer.DOUBLE }, message);
+			Round.Offer defaultOffer = ViewGeneral.getOption(new Round.Offer[]{Round.Offer.STAND, Round.Offer.HIT, Round.Offer.DOUBLE }, message);
 			message = "Default amount of bet?"; 
-			BigDecimal defaultBet = GameViewGeneral.getAmount(message);
+			BigDecimal defaultBet = ViewGeneral.getAmount(message);
 			playingStrategy = new PlayingStrategyPredictable(defaultOffer, defaultBet, acceptInsurance);
 		}
 		Game game = new Game(playingStrategy, numRounds, money);
-		user.addNewGame(game);
+		ApplicationService.addNewGame(game, user);
 		playGame(game);
 	}
 	
@@ -193,7 +194,7 @@ public class GameController {
 //		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, BigDecimal.valueOf(1), false);
 		//Game game = new Game(playingStrategy, new Deck());
 		do {
-			game.play();
+			ApplicationService.playGame(user, game);
 			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only).
       
 			//	interactive case, game not finished
@@ -204,24 +205,24 @@ public class GameController {
 					int n = game.pastRounds.size();
 					if( n > 0){
 						Round previousRound = game.pastRounds.get(n-1);
-						GameView.displayRoundDetails(previousRound);
+						View.displayRoundDetails(previousRound);
 					}
-					strategy.setAmountBet(GameView.getAmountBet(game.gameID, game.currentRound.roundNumber));
+					strategy.setAmountBet(View.getAmountBet(game.gameID, game.currentRound.roundNumber));
 				}
 				else{
-					strategy.setResponseToOffer(GameView.getResponseToOffer(round.availableOffers, round.dealerHand, round.currentHand));
+					strategy.setResponseToOffer(View.getResponseToOffer(round.availableOffers, round.dealerHand, round.currentHand));
 				}
 			}
 			
 			// interactive case, game finished
 			if(game.isInteractive() && !game.userInputNeeded){
 				int n = game.pastRounds.size();
-				GameView.displayRoundDetails(game.pastRounds.get(n-1));
+				View.displayRoundDetails(game.pastRounds.get(n-1));
 			}
 			
 			//	non-interactive case, game finished
 			if(!game.isInteractive()){
-				GameView.displayGameDetails(game);
+				View.displayGameDetails(game);
 			}
 			//	todo next: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
 			//todo after: create the views for the user returning to the game 

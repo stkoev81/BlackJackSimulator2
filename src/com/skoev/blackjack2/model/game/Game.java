@@ -75,6 +75,7 @@ public class Game {
 	}
 
 	//todo normal: if the game is finished vs. if the game is not finished, display differently.
+	//todo normal: remove the Game ends in case the game is not finished. 
 	@Override
 	public String toString() {
 		return "--Game " + gameID + "\n" 

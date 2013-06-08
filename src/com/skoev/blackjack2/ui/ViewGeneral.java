@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.view;
+package com.skoev.blackjack2.ui;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,10 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.skoev.blackjack2.controller.UserCanceledActionException;
 import com.skoev.blackjack2.model.game.Round;
 
-public class GameViewGeneral {
+public class ViewGeneral {
 	protected static BufferedReader in; 
 	protected static PrintWriter out; 
 	
