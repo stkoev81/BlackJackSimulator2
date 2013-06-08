@@ -1,5 +1,6 @@
 package com.skoev.blackjack2.service;
 import java.io.ObjectInputStream.GetField;
+import java.util.Collection;
 
 import com.skoev.blackjack2.infrastructure.*;
 import com.skoev.blackjack2.model.account.User;
@@ -51,4 +52,13 @@ public class ApplicationService {
 		return user.getGame(gameId);
 	}
 
+	public static Collection<Integer> getGameIds(User user){
+		return user.getGameIds();
+	}
+	
+	public static Collection<Game> getGames(User user){
+		return user.getGames();
+	}
+	
+	
 }

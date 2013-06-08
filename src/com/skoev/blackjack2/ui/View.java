@@ -19,6 +19,9 @@ public class View extends ViewGeneral{
 	
 	public static void displayGameSummary(Collection<Game> games){
 		display("These are your games: ");
+		if(games.isEmpty()){
+			display("\tNo games yet");
+		}
 		for(Game game : games){
 			displayGameSummary(game);
 		}

@@ -51,7 +51,7 @@ public class ViewGeneral {
 		return getPositiveInteger(null, message);
 	}
 	
-	public static int getPositiveInteger(Set<Integer> allowedValues, String message){
+	public static int getPositiveInteger(Collection<Integer> allowedValues, String message){
 		out.println(message);
 		int result = 0;
 		while(result == 0){

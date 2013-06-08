@@ -2,6 +2,7 @@ package com.skoev.blackjack2.ui;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -111,7 +112,7 @@ public class Controller {
 		boolean end = false;
 		while (!end){
 			try{
-				View.displayGameSummary(user.getGames());
+				View.displayGameSummary(ApplicationService.getGames(user));
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
 				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
 				Option option = ViewGeneral.getOption(options, message);
@@ -121,9 +122,14 @@ public class Controller {
 						user = null;
 						break;
 					case view_details:
-						//todo next: change this call to get one of a group of integers; if there is only one integer, then get the same game. //also if no games don't go to view game details, simply state there are not games. 
-						int whichGame = ViewGeneral.getPositiveInteger("Which game number?");
-						viewGameDetails(whichGame);	
+						Collection<Integer> gameIds = ApplicationService.getGameIds(user);  
+						if(gameIds.size()>0){
+							int whichGame = ViewGeneral.getPositiveInteger(gameIds, "Which game number?");
+							viewGameDetails(whichGame);	
+						}
+						else{
+							ViewGeneral.display("No games to view!");
+						}
 						break;
 					case start_new:
 						startNewGame();
@@ -225,8 +231,7 @@ public class Controller {
 				View.displayGameDetails(game);
 			}
 			//	todo next: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
-			//todo after: create the views for the user returning to the game 
-			// todo after: implement the other automated playing strategies; some tests
+			// todo normal: implement the other automated playing strategies; some tests
 		}
 		while(game.userInputNeeded);
 		
