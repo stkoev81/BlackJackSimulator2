@@ -229,16 +229,6 @@ public class Round {
 		}
 		
 	}
-	@Override
-	public String toString() {
-		return "-----Round "+ roundNumber+ " results-----\nmoneyStart=" + moneyStart + ", moneyEnd=" + moneyEnd
-				+ ", roundStatus=" + roundStatus + "\n" + Util.toCollString("", hands, "") + dealerHand + "------------";
-	}
-	
-	
-		
-	
-	
 	
 }
 //todo normal: automatic win when the hand is 21 - don't ask for player's response. 	

@@ -90,7 +90,7 @@ public class ViewGeneral {
 	
 	public static <T> T getOption(T[] options, String message){
 		out.println(message);
-		out.println("Please choose one of the following options by entering the number next to it:");
+		out.println("Choose one of the following options by entering the number next to it:");
 		int i = 1; 
 		
 		for(T option : options){

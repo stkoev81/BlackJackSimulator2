@@ -135,10 +135,10 @@ public class Hand {
 	}
 
 	
-	// todo basic: if handOutcome or amount bet or final points is null (e.g. dealer's hand), dont print it). 
 	@Override
 	public String toString() {
 		String cardsString = "";
+		String handString = "";
 		for(Card card: cards){
 			cardsString = cardsString + card;
 		}
@@ -146,26 +146,19 @@ public class Hand {
 		
 		
 		
-		if(handNumber != 0){		
-			return "Player hand " + handNumber + ": amountBet=" + amountBet 
-				+ ", cards=" + cardsString
-				+ ", finalPoints=" + finalPoints
-				+ ", handOutcome=" + handOutcome + "\n";
+		if(handNumber != 0){
+			handString = "Player hand " + handNumber + ": amountBet=" + amountBet + ", cards=" + cardsString;
+			if(finalPoints != null && handOutcome != null){
+				handString += ", finalPoints=" + finalPoints + ", handOutcome=" + handOutcome; 
+			}
 		}
 		else{
-			if(finalPoints != null){
-				return "Dealer hand:"  
-						+ " cards=" + cardsString
-						+ ", finalPoints=" + finalPoints + "\n";
+			handString = "Dealer hand:" + " cards=" + cardsString;
+			if(finalPoints != null && handOutcome != null){
+				handString += ", finalPoints=" + finalPoints;
 			}
-			else{
-				return "Dealer hand:"  
-						+ " cards=" + cardsString
-						+ "\n";
-			}
-			
 		}
-		
+		return handString;
 		
 		
 	}

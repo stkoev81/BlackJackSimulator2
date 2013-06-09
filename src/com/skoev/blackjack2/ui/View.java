@@ -27,28 +27,50 @@ public class View extends ViewGeneral{
 	}
 	
 	public static void displayGameSummary(Game game){
-		//todo basic : display the game summary such as: "game number, status - finished, not finished, waiting for user input, strategy. If finished, won or lost"
-		display(game.gameID);
+		String status; 
+		if(game.isFinished()){
+			status = "complete";  
+		}
+		else{
+			status = "incomplete";
+		}
+		display("======= Game " + game.gameID + " =======");
+		display("status="  + status +  ", moneyStart="+ game.moneyStart + ", moneyCurrent=" + game.moneyCurrent + ", strategy=" + game.playingStrategy);
+		display("==================="); 
 	}
 	
 	public static void displayGameDetails(Game game){
-		display(game);
+		displayGameSummary(game);
+		display("Game beginning.");
+		for(Round round : game.pastRounds){
+			displayRoundDetails(round);
+		}
+		if(game.isFinished()){
+			display("Game end. numRoundsPlayed=" + game.numRoundsPlayed +  ", moneyCurrent=" + game.moneyCurrent);
+		}
 	}
 	
 	public static void displayRoundDetails(Round round){
-		display(round);
+		display("---------Round "+ round.roundNumber + " results-----------");
+		display("moneyStart=" + round.moneyStart + ", moneyEnd=" + round.moneyEnd
+		+ ", roundStatus=" + round.roundStatus);
+		for(Hand hand : round.hands){
+			display(hand);
+		}
+		display(round.dealerHand);
+		display("---------------------------------------------");
 	}
 		
 
 	public static Round.Offer getResponseToOffer(List<Round.Offer> availableOffers, Hand dealerHand, Hand currentHand){
 		String message = "User input needed for the following hand: \n";
 		message += "\t" + currentHand + "\n";
-		message += "\t" + dealerHand + "\n";
+		message += "\t" + dealerHand;
 		return getOption(availableOffers.toArray(new Round.Offer[0]), message); 
 	}
 	
 	public static BigDecimal getAmountBet(int gameNumber, int roundNumber){
-		String message = "Starting game " + gameNumber + ", round " + roundNumber + ". Please enter bet amount." + "\n";
+		String message = "Starting game " + gameNumber + ", round " + roundNumber + ". Enter bet amount:";
 		return getAmount(message);
 	}
 	

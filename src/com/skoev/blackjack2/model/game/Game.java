@@ -76,20 +76,4 @@ public class Game {
 		return deck.nextCard(); 
 	}
 
-	//todo basic: if the game is finished vs. if the game is not finished, display differently.
-	//todo basic: remove the Game ends in case the game is not finished. 
-	@Override
-	public String toString() {
-		return "--Game " + gameID + "\n" 
-				+ "Game settings: playingStrategy=" + playingStrategy +  ", moneyStart=" + moneyStart + "\n\n"
-				 
-				+ Util.toCollString("", pastRounds, "\n") 
-				 
-				+ "Game ends. numRoundsPlayed=" + numRoundsPlayed	+  ", moneyCurrent=" + moneyCurrent + "\n" ;
-				 
-				
-	}
-	
-	
-
 }

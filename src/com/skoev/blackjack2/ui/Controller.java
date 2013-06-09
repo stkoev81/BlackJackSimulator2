@@ -173,19 +173,24 @@ public class Controller {
 				break;
 			case continue_game:
 				ViewGeneral.display("Continuing game " + gameId);
-				playGame(game); 
+				if(game.isFinished()){
+					ViewGeneral.display("This game is finished! Cannot continue it.");
+				}
+				else{
+					playGame(game);
+				}
 				break;
 		}
 	}
 	
 	public void startNewGame(){
 		Strategy[] options = {Strategy.interactive, Strategy.predictable};
-		String message = "Choose a game type";
+		String message = "You must choose a game type.";
 		Strategy option = ViewGeneral.getOption(options, message);
 		
 		PlayingStrategy playingStrategy = null;
-		BigDecimal money = ViewGeneral.getAmount("Enter starting money");
-		int numRounds = ViewGeneral.getPositiveInteger("Enter number of rounds to play");
+		BigDecimal money = ViewGeneral.getAmount("Enter starting money:");
+		int numRounds = ViewGeneral.getPositiveInteger("Enter number of rounds to play:");
 		
 		if(option.equals(Strategy.interactive)){
 			playingStrategy = new PlayingStrategyInteractive();
@@ -224,6 +229,7 @@ public class Controller {
 						View.displayRoundDetails(previousRound);
 					}
 					strategy.setAmountBet(View.getAmountBet(game.gameID, game.currentRound.roundNumber));
+					ViewGeneral.display("Round started.");
 				}
 				else{
 					strategy.setResponseToOffer(View.getResponseToOffer(round.availableOffers, round.dealerHand, round.currentHand));
@@ -240,7 +246,6 @@ public class Controller {
 			if(!game.isInteractive()){
 				View.displayGameDetails(game);
 			}
-			//	todo basic: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
 		}
 		while(game.userInputNeeded);
 		
