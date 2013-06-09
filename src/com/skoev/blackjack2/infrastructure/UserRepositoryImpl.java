@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.skoev.blackjack2.model.account.*;
+import com.skoev.blackjack2.service.UserRepository;
 
 public class UserRepositoryImpl implements UserRepository{
 	private static UserRepositoryImpl instance = null;

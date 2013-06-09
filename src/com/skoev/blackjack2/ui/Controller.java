@@ -9,7 +9,8 @@ import java.util.Observable;
 
 import com.skoev.blackjack2.model.account.*;
 import com.skoev.blackjack2.model.game.*;
-import com.skoev.blackjack2.service.ApplicationService;
+import com.skoev.blackjack2.service.AccountService;
+import com.skoev.blackjack2.service.GameService;
 
 
 public class Controller {
@@ -71,7 +72,7 @@ public class Controller {
 			ViewGeneral.display("Logging in with exising account. ");
 			String username = ViewGeneral.getInput("Enter username: ");
 			String password = ViewGeneral.getInput("Enter password: "); 
-			user = ApplicationService.authenticateUser(username, password); 
+			user = AccountService.authenticateUser(username, password); 
 			if(user != null){
 				goToHomeScreen();
 			}
@@ -84,22 +85,31 @@ public class Controller {
 		String username = null; 
 		String password = null; 
 		String password2 = null;
-		ViewGeneral.display("Creating a new account. ");
+		ViewGeneral.display("Creating a new account. " + AccountService.RULES_MESSAGE);
 		while(password == null || !password.equals(password2)){
 			username  =  ViewGeneral.getInput("Enter username: ");
-			password = ViewGeneral.getInput("Enter password: "); 
+			if(!AccountService.checkUsernameAvailable(username)){
+				ViewGeneral.display("Username is already taken. Try again. ");
+				continue;
+			}
+			password = ViewGeneral.getInput("Enter password: ");
+			if(!AccountService.checkUsernamePasswordRules(username, password)){
+				ViewGeneral.display(AccountService.RULES_MESSAGE + " Try again.");
+				continue;
+			}
 			password2 = ViewGeneral.getInput("Re-enter password: ");
 			if(!password.equals(password2)){
 				ViewGeneral.display("Passwords don't match. Try again. "); 
 			}
+			
 		}
-		user = ApplicationService.createNewUser(username, password); 
+		user = AccountService.createNewUser(username, password); 
 		if(user != null){
 			ViewGeneral.display("Account created");
 			goToHomeScreen();
 		}
 		else{   
-			ViewGeneral.display("Account could not be created");
+			ViewGeneral.display("Account could not be created. Contact technical support.");
 		}
 		
 	}
@@ -112,7 +122,7 @@ public class Controller {
 		boolean end = false;
 		while (!end){
 			try{
-				View.displayGameSummary(ApplicationService.getGames(user));
+				View.displayGameSummary(GameService.getGames(user));
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
 				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
 				Option option = ViewGeneral.getOption(options, message);
@@ -122,7 +132,7 @@ public class Controller {
 						user = null;
 						break;
 					case view_details:
-						Collection<Integer> gameIds = ApplicationService.getGameIds(user);  
+						Collection<Integer> gameIds = GameService.getGameIds(user);  
 						if(gameIds.size()>0){
 							int whichGame = ViewGeneral.getPositiveInteger(gameIds, "Which game number?");
 							viewGameDetails(whichGame);	
@@ -143,7 +153,7 @@ public class Controller {
 	} 
 	
 	public void viewGameDetails(int gameId){
-		Game game = ApplicationService.getGame(gameId, user);
+		Game game = GameService.getGame(gameId, user);
 		View.displayGameDetails(game);
 		String message = "You can delete or continue (if incomplete) the game";
 		
@@ -158,7 +168,7 @@ public class Controller {
 			case home_screen: 
 				break;
 			case delete_game:
-				ApplicationService.deleteGame(gameId, user);
+				GameService.deleteGame(gameId, user);
 				ViewGeneral.display("Deleted game " + gameId);
 				break;
 			case continue_game:
@@ -191,7 +201,7 @@ public class Controller {
 			playingStrategy = new PlayingStrategyPredictable(defaultOffer, defaultBet, acceptInsurance);
 		}
 		Game game = new Game(playingStrategy, numRounds, money);
-		ApplicationService.addNewGame(game, user);
+		GameService.addNewGame(game, user);
 		playGame(game);
 	}
 	
@@ -200,7 +210,7 @@ public class Controller {
 //		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, BigDecimal.valueOf(1), false);
 		//Game game = new Game(playingStrategy, new Deck());
 		do {
-			ApplicationService.playGame(user, game);
+			GameService.playGame(user, game);
 			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only).
       
 			//	interactive case, game not finished
