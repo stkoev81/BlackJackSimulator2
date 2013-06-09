@@ -8,8 +8,7 @@ import java.util.List;
 
 /**
  * 
- * todo normal: add filelds to show whether there was any doubling involved (e.g. initial bet, final bet). Also add fields to keep track of whether the hand is insured and whether the insurance is lost or won.  
- * todo normla: no need for hand history because when you see the final hand, you know pretty much the history (except for insurance and doubling). Stand, split, hit are pretty obvious. 
+ * todo basic: add filelds to show whether there was any doubling involved (e.g. initial bet, final bet). Also add fields to keep track of whether the hand is insured and whether the insurance is lost or won.  
  * 
  * @author stefan.t.koev
  *
@@ -17,7 +16,6 @@ import java.util.List;
 public class Hand {
 	public int handNumber;
 	public BigDecimal amountBet;
-	public List<HandHistory> handHistory = Collections.EMPTY_LIST;
 	public List<Card> cards = Collections.EMPTY_LIST;
 	public Integer finalPoints;
 
@@ -126,7 +124,6 @@ public class Hand {
 		return amountBet.divide(BigDecimal.valueOf(2));
 	}
 	
-	//todon basic check if big decimal is immutable
 	public BigDecimal getInsuranceAmountWon(){
 		BigDecimal result = getInsureanceAmountBet().multiply(BigDecimal.valueOf(2));
 		result = result.add(getInsureanceAmountBet());
@@ -138,7 +135,7 @@ public class Hand {
 	}
 
 	
-	// todo normal: if handOutcome or amount bet or final points is null (e.g. dealer's hand), dont print it). 
+	// todo basic: if handOutcome or amount bet or final points is null (e.g. dealer's hand), dont print it). 
 	@Override
 	public String toString() {
 		String cardsString = "";

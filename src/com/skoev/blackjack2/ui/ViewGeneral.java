@@ -25,7 +25,8 @@ public class ViewGeneral {
 	public static BigDecimal getAmount(String message){
 		out.println(message);
 		double result = 0;
-		while(result == 0){
+		boolean success = false;
+		while(!success){
 			try{
 				String response = in.readLine();
 				checkActionCanceled(response);
@@ -33,6 +34,7 @@ public class ViewGeneral {
 				if (result <= 0){
 					throw new IllegalArgumentException();
 				}
+				success = true;
 			}
 			catch(IOException e){
 				System.out.println("Error! : there was an unknown problem reading response. If problem persists, contact support. ");
@@ -54,7 +56,8 @@ public class ViewGeneral {
 	public static int getPositiveInteger(Collection<Integer> allowedValues, String message){
 		out.println(message);
 		int result = 0;
-		while(result == 0){
+		boolean success = false;
+		while(!success){
 			try{
 				String response = in.readLine();
 				checkActionCanceled(response);
@@ -65,6 +68,7 @@ public class ViewGeneral {
 				if(allowedValues != null && !allowedValues.contains(result)){
 					throw new IllegalArgumentException();
 				}
+				success = true;
 			}
 			catch(IOException e){
 				out.println("Error! : there was an unknown problem reading response. If problem persists, contact support. ");

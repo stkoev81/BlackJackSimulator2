@@ -98,7 +98,7 @@ public class Controller {
 			ViewGeneral.display("Account created");
 			goToHomeScreen();
 		}
-		else{ ////todo basic: check for exceptions why the account could not created. Using business rules. Print out the rules for passwords from the business layer.  
+		else{   
 			ViewGeneral.display("Account could not be created");
 		}
 		
@@ -230,8 +230,7 @@ public class Controller {
 			if(!game.isInteractive()){
 				View.displayGameDetails(game);
 			}
-			//	todo next: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
-			// todo normal: implement the other automated playing strategies; some tests
+			//	todo basic: pretty up the outputs a little and verify they make sense (e.g. if it's a dealer hand, not need for amount bet because it's null).
 		}
 		while(game.userInputNeeded);
 		

@@ -8,7 +8,6 @@ import java.util.List;
 /**
  *  
  * 
- * todo normal - fix the game id (global) and round ids (local, within each game).
  * @author stefan.t.koev
  *
  */
@@ -36,7 +35,10 @@ public class Game {
 	}
 	
 	
-	
+	//todo normal: add getters and setters and set proper visibility
+	//todo normal: comment
+	//todo normal: add more tests
+	//todo normal: verify model validations (e.g. not playing if not enough money). 
 	public void play(){
 		if (isFinished()){
 			throw new RuntimeException("this game is already finished. Cannot continue playing");
@@ -74,8 +76,8 @@ public class Game {
 		return deck.nextCard(); 
 	}
 
-	//todo normal: if the game is finished vs. if the game is not finished, display differently.
-	//todo normal: remove the Game ends in case the game is not finished. 
+	//todo basic: if the game is finished vs. if the game is not finished, display differently.
+	//todo basic: remove the Game ends in case the game is not finished. 
 	@Override
 	public String toString() {
 		return "--Game " + gameID + "\n" 

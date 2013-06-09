@@ -14,7 +14,6 @@ import com.skoev.blackjack2.model.game.*;
  *
  */
 public class ApplicationService {
-	//User logIn(String username, String password);
 	//todo basic: add exceptions to the user authentication and creation
 	public static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
 	

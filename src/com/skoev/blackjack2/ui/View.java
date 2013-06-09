@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-//todo normal: refactor all the methods getting user response to use common code 
 public class View extends ViewGeneral{
 	
 	
@@ -27,10 +26,8 @@ public class View extends ViewGeneral{
 		}
 	}
 	
-	//todo advanced: move the to_string methods of of the game and round here. Make the to_string methods instead simple and displaying just a summary. 
 	public static void displayGameSummary(Game game){
-		//todo normal : display the game summary such as: "game number, status - finished, not finished, waiting for user input, strategy. If finished, won or lost"
-		//todo basic: display the simplified game sumammary such as: game number
+		//todo basic : display the game summary such as: "game number, status - finished, not finished, waiting for user input, strategy. If finished, won or lost"
 		display(game.gameID);
 	}
 	

@@ -38,12 +38,13 @@ public class User {
 	}
 	
 	private int getNextGameId(){
-		int id = 1;
+		int id = 0;
 		for(Game game : games){
 			if(game.gameID > id){
 				id = game.gameID;
 			}
 		}
+		id = id + 1;
 		return id;
 	}
 	
@@ -57,7 +58,7 @@ public class User {
 			return games.get(i);
 		}
 	}
-	//todo basic: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
+	//todo advanced: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
 	public void addNewGame(Game game){
 		game.gameID = getNextGameId();
 		games.add(game);
@@ -77,5 +78,4 @@ public class User {
 
 }
 
-//todo next 1: modify the user repository to save the old stuff
 

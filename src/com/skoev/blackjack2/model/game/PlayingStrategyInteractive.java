@@ -6,7 +6,7 @@ import java.util.Collection;
 import com.skoev.blackjack2.model.game.Round.Offer;
 
 /**
- * todo normal - create a hierarchy of this forseveral types of palying strategies
+ * todo advanced - create a hierarchy of this forseveral types of palying strategies
  * 
  * @author stefan.t.koev
  *

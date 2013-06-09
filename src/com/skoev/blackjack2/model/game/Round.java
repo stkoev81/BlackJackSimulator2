@@ -241,7 +241,7 @@ public class Round {
 	
 	
 }
-//todo basic: automatic win when the hand is 21 - don't ask for player's response. 	
+//todo normal: automatic win when the hand is 21 - don't ask for player's response. 	
 		
 	
 		
