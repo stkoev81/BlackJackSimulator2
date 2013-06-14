@@ -12,9 +12,15 @@ import java.util.Set;
 
 import com.skoev.blackjack2.model.game.Round;
 
+/**
+ * Contains general methods to interact with the user. 
+ */
+
 public class ViewGeneral {
 	protected static BufferedReader in; 
-	protected static PrintWriter out; 
+	protected static PrintWriter out;
+	public static final String FOOTER = "######################################################";
+	public static final char FOOTER_CHAR = '#';
 	
 	static {
 		//It's OK to leave these streams open because the underlying streams, System.in and System.out, are always open anyway.
@@ -137,6 +143,7 @@ public class ViewGeneral {
 	private static void checkActionCanceled(String s) {
 		if(s == null || s.length() == 0){
 			out.println("User canceled action by entering empty input. Returning to previous screen.");
+			displayFooter();
 			throw new UserCanceledActionException();
 		}
 		
@@ -144,6 +151,36 @@ public class ViewGeneral {
 	
 	public static void display(Object toDisplay){
 		out.println(toDisplay.toString());
+	}
+	
+	public static void displayFooter(){
+//		out.println("##############################");
+		out.println(FOOTER);
+	}
+	public static void displayHeader(String title){
+		if (title == null){
+			title = "";
+		}
+		if(!title.equals("")){
+			title = " " + title + " ";
+		}
+		int paddingWidth = FOOTER.length() - title.length();
+		int paddingLeft, paddingRight;
+		if(paddingWidth < 0 ){
+			paddingWidth = paddingLeft = paddingRight = 0; 
+		}
+		else{
+			paddingLeft = paddingWidth/2;
+			paddingRight = FOOTER.length() - paddingLeft - title.length();
+		}
+		out.println(createString(FOOTER_CHAR, paddingLeft) + title + createString(FOOTER_CHAR, paddingRight));
+	}
+	private static String createString(char c, int repetitons){
+		StringBuilder sb = new StringBuilder(repetitons);
+		for(int i=0; i<repetitons; i++){
+			sb.append(c);
+		}
+		return sb.toString();
 	}
 	
 

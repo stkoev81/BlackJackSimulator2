@@ -8,8 +8,6 @@ import java.util.List;
 
 /**
  * 
- * todo basic: add filelds to show whether there was any doubling involved (e.g. initial bet, final bet). Also add fields to keep track of whether the hand is insured and whether the insurance is lost or won.  
- * 
  * @author stefan.t.koev
  *
  */
@@ -20,8 +18,10 @@ public class Hand {
 	public Integer finalPoints;
 
 	private HAND_OUTCOME handOutcome = null; 
+	private INSURANCE_OUTCOME insuranceOutcome = null; 
 	
 	public enum HAND_OUTCOME{WIN, LOSS, PUSH}
+	public enum INSURANCE_OUTCOME{NOT_OFFERED, OFFERED, DECLINED, WIN, LOSS}
 	
 	public Hand(BigDecimal amountBet, int handNumber, Card ...cardsToAdd){
 		this.amountBet = amountBet;
@@ -135,6 +135,15 @@ public class Hand {
 	}
 
 	
+	
+	public INSURANCE_OUTCOME getInsuranceOutcome() {
+		return insuranceOutcome;
+	}
+
+	public void setInsuranceOutcome(INSURANCE_OUTCOME insuranceOutcome) {
+		this.insuranceOutcome = insuranceOutcome;
+	}
+
 	@Override
 	public String toString() {
 		String cardsString = "";
@@ -151,11 +160,17 @@ public class Hand {
 			if(finalPoints != null && handOutcome != null){
 				handString += ", finalPoints=" + finalPoints + ", handOutcome=" + handOutcome; 
 			}
+			if(insuranceOutcome != null){
+				handString += ", insurance=" + insuranceOutcome;
+			}
 		}
 		else{
 			handString = "Dealer hand:" + " cards=" + cardsString;
 			if(finalPoints != null && handOutcome != null){
 				handString += ", finalPoints=" + finalPoints;
+			}
+			if(insuranceOutcome != null){
+				handString += ", insurance=" + insuranceOutcome;
 			}
 		}
 		return handString;

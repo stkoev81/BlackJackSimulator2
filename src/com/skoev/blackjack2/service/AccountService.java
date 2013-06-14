@@ -6,8 +6,8 @@ import com.skoev.blackjack2.model.account.User;
 import com.skoev.blackjack2.model.game.*;
 
 /**
- * The responsibility is to provide basic account related functionality. Checks if user exists and retrieves it, creates a new user (checking if the new username and password 
- * obey the rules). Creates a new game for the user or retrieves and continues existing games. Pauses and saves games.
+ * Provides basic account related functionality. Checks if user exists and retrieves it, creates a new user (checking if the new username and password 
+ * obey the rules). 
  * @author stefan.t.koev
  *
  */

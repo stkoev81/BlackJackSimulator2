@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a user of the application. 
+ */
+
 public class User {
 	public String username; 
 	public String password;

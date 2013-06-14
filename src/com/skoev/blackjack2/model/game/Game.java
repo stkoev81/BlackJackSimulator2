@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 /**
- *  
+ * The main class in the BlackJack model. Provides functionality for playing a single blackjack game. 
  * 
  * @author stefan.t.koev
  *
@@ -14,7 +14,7 @@ import java.util.List;
 public class Game {
 	public int gameID = 1; 
 	public int numRoundsPlayed; 
-	public int numRoundsToPlay; 
+	public final int numRoundsToPlay; 
 	public BigDecimal moneyStart;
 	public BigDecimal moneyCurrent;
 	public Round currentRound;

@@ -12,7 +12,9 @@ import com.skoev.blackjack2.model.game.*;
 import com.skoev.blackjack2.service.AccountService;
 import com.skoev.blackjack2.service.GameService;
 
-
+/**
+ * Controls the state of the application. Uses the view to interact with the user. Maps user inputs to service and model method calls. Displays the results back to the user. 
+ */
 public class Controller {
 	public User user; 
 	
@@ -38,10 +40,12 @@ public class Controller {
 		// do this in a loop which is broken only by exit
 		boolean end = false; 
 		while(!end){
-			try{ 
+			try{
+				ViewGeneral.displayHeader("Main screen"); 
 				String message = "This is a blackjack simulation game.";
 				Option[] options = {Option.help, Option.login, Option.createAccount, Option.exit};
 				Option option = ViewGeneral.getOption(options, message);
+				ViewGeneral.displayFooter();
 				switch (option){
 				case login : 
 					logIn();
@@ -64,20 +68,25 @@ public class Controller {
 	}
 	
 	public void showHelp(){
+		ViewGeneral.displayHeader("Help screen");
 		String message = "This is a blackjack game help"; 
 		ViewGeneral.display(message);
+		ViewGeneral.displayFooter();
 	}
  
 	public void logIn(){
+			ViewGeneral.displayHeader("Login screen");
 			ViewGeneral.display("Logging in with exising account. ");
 			String username = ViewGeneral.getInput("Enter username: ");
 			String password = ViewGeneral.getInput("Enter password: "); 
 			user = AccountService.authenticateUser(username, password); 
 			if(user != null){
+				ViewGeneral.displayFooter();
 				goToHomeScreen();
 			}
 			else{
 				ViewGeneral.display("Invalid username/password.");
+				ViewGeneral.displayFooter();
 		}
 	}
 	
@@ -85,6 +94,7 @@ public class Controller {
 		String username = null; 
 		String password = null; 
 		String password2 = null;
+		ViewGeneral.displayHeader("Create account screen");
 		ViewGeneral.display("Creating a new account. " + AccountService.RULES_MESSAGE);
 		while(password == null || !password.equals(password2)){
 			username  =  ViewGeneral.getInput("Enter username: ");
@@ -106,10 +116,12 @@ public class Controller {
 		user = AccountService.createNewUser(username, password); 
 		if(user != null){
 			ViewGeneral.display("Account created");
+			ViewGeneral.displayFooter();
 			goToHomeScreen();
 		}
 		else{   
 			ViewGeneral.display("Account could not be created. Contact technical support.");
+			ViewGeneral.displayFooter();
 		}
 		
 	}
@@ -121,43 +133,51 @@ public class Controller {
 		//if view game details, get which game & call view GAme details
 		boolean end = false;
 		while (!end){
+			Option option = null; 
 			try{
+				ViewGeneral.displayHeader("User's home screen");
 				View.displayGameSummary(GameService.getGames(user));
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
 				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
-				Option option = ViewGeneral.getOption(options, message);
+				option = ViewGeneral.getOption(options, message);
 				switch(option){
 					case log_out:
 						end = true;
 						user = null;
+						ViewGeneral.displayFooter();
 						break;
 					case view_details:
 						Collection<Integer> gameIds = GameService.getGameIds(user);  
 						if(gameIds.size()>0){
 							int whichGame = ViewGeneral.getPositiveInteger(gameIds, "Which game number?");
+							ViewGeneral.displayFooter();
 							viewGameDetails(whichGame);	
 						}
 						else{
 							ViewGeneral.display("No games to view!");
+							ViewGeneral.displayFooter();
 						}
 						break;
 					case start_new:
+						ViewGeneral.displayFooter();
 						startNewGame();
 						break;
 				}
 			}
 			catch (UserCanceledActionException e){
-				//stay on home screen 
+//				if(option == null){  // the action was canceled from the home screen. 
+//					ViewGeneral.displayFooter();
+//				}
 			}
 		}
 	} 
 	
 	public void viewGameDetails(int gameId){
+		View.displayHeader("Game details screen");
 		Game game = GameService.getGame(gameId, user);
 		View.displayGameDetails(game);
 		String message = "You can delete or continue (if incomplete) the game";
 		
-		//todo basic: check game for completenesss and don't allow to continue if it is complete
 		Option[] options = {Option.home_screen, Option.delete_game, Option.continue_game};
 		
 		Option option = ViewGeneral.getOption(options, message);
@@ -166,17 +186,21 @@ public class Controller {
 		//if continue game, call playSingleGame
 		switch(option){
 			case home_screen: 
+				ViewGeneral.displayFooter();
 				break;
 			case delete_game:
 				GameService.deleteGame(gameId, user);
 				ViewGeneral.display("Deleted game " + gameId);
+				ViewGeneral.displayFooter();
 				break;
 			case continue_game:
 				ViewGeneral.display("Continuing game " + gameId);
 				if(game.isFinished()){
 					ViewGeneral.display("This game is finished! Cannot continue it.");
+					ViewGeneral.displayFooter();
 				}
 				else{
+					ViewGeneral.displayFooter();
 					playGame(game);
 				}
 				break;
@@ -186,6 +210,7 @@ public class Controller {
 	public void startNewGame(){
 		Strategy[] options = {Strategy.interactive, Strategy.predictable};
 		String message = "You must choose a game type.";
+		ViewGeneral.displayHeader("Start new game screen");
 		Strategy option = ViewGeneral.getOption(options, message);
 		
 		PlayingStrategy playingStrategy = null;
@@ -207,6 +232,7 @@ public class Controller {
 		}
 		Game game = new Game(playingStrategy, numRounds, money);
 		GameService.addNewGame(game, user);
+		ViewGeneral.displayFooter();
 		playGame(game);
 	}
 	
@@ -217,14 +243,17 @@ public class Controller {
 		do {
 			GameService.playGame(user, game);
 			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only).
-      
+			
 			//	interactive case, game not finished
 			if(game.isInteractive() && game.userInputNeeded){
 				PlayingStrategy strategy = game.playingStrategy;
 				Round round = game.currentRound;
 				if(Round.RoundStatus.HAND_BEING_DEALT.equals(round.roundStatus)){
 					int n = game.pastRounds.size();
-					if( n > 0){
+					if(n == 0){ // if this is the first round of the game
+						ViewGeneral.displayHeader("Interactive game screen");
+					}
+					else{
 						Round previousRound = game.pastRounds.get(n-1);
 						View.displayRoundDetails(previousRound);
 					}
@@ -240,16 +269,18 @@ public class Controller {
 			if(game.isInteractive() && !game.userInputNeeded){
 				int n = game.pastRounds.size();
 				View.displayRoundDetails(game.pastRounds.get(n-1));
+				ViewGeneral.displayFooter();
 			}
 			
 			//	non-interactive case, game finished
 			if(!game.isInteractive()){
+				ViewGeneral.displayHeader("Non-interactive game screen");
 				View.displayGameDetails(game);
+				ViewGeneral.displayFooter();
 			}
 		}
 		while(game.userInputNeeded);
 		
 		
-	}
-			
+	} 
 }

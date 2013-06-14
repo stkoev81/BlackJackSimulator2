@@ -6,6 +6,9 @@ import com.skoev.blackjack2.infrastructure.UserRepositoryImpl;
 import com.skoev.blackjack2.model.account.User;
 import com.skoev.blackjack2.model.game.Game;
 
+/**
+ *	Provides game playing functionality. Also starts new games and retrieves existing games. 
+ */
 public class GameService {
 	private static UserRepository userRepository = UserRepositoryImpl.getInstance();
 

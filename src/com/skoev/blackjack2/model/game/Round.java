@@ -11,6 +11,8 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.Collections;
 
+import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
+
 
 
 /**
@@ -19,13 +21,13 @@ import java.util.Collections;
  */
 public class Round {
 	public int roundNumber;
-	public BigDecimal moneyStart = BigDecimal.valueOf(100);
-	public BigDecimal moneyEnd = BigDecimal.valueOf(10);
+	public BigDecimal moneyStart;
+	public BigDecimal moneyEnd;
 	public RoundStatus roundStatus = RoundStatus.HAND_BEING_DEALT;
 	public Game game;
 	public List<Hand> hands = new ArrayList<Hand>(); 
 	public Hand dealerHand;
-	private Queue<Hand> handsToProcess = new LinkedList<Hand>();
+	Queue<Hand> handsToProcess = new LinkedList<Hand>();
 	public Hand currentHand = null;
 	public List<Offer> availableOffers = Collections.EMPTY_LIST;
 	
@@ -51,6 +53,7 @@ public class Round {
 				game.userInputNeeded = true;
 				return;
 			}
+			game.subtractMoney(betAmount);
 			hands.add(new Hand(betAmount, 1, game.dealCard(), game.dealCard()));
 			dealerHand = new Hand(null, 0, game.dealCard());
 			roundStatus = RoundStatus.HAND_BEING_INSURED;
@@ -64,9 +67,13 @@ public class Round {
 					game.userInputNeeded = true;
 					return;
 				}
+				applyOffer(playerResponse);
+			}
+			else{
+				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.NOT_OFFERED);
 			}
 			
-			applyOffer(playerResponse);	
+				
 			currentHand = null;
 			handsToProcess.addAll(hands);
 			roundStatus = RoundStatus.HANDS_BEING_PLAYED_OUT;
@@ -111,13 +118,15 @@ public class Round {
 			
 			if(dealerHand.getCurrentPoints() == 21){ // insurance won
 				game.addMoney(currentHand.getInsuranceAmountWon());
+				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.WIN);
 			}
 			else { // insurance lost
 				// do nothing - insurance already subtracted form money, no need to subtract more money here
+				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.LOSS);
 			}
 			break;
 		case DECLINE_INSURANCE:
-			//do nothing
+			currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.DECLINED);
 			break;
 		case STAND:
 			currentHand = null; //we're done with playing this hand

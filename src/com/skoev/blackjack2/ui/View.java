@@ -10,6 +10,10 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+
+/**
+ * Contains methods to interact with the user about specific items. 
+ */
 public class View extends ViewGeneral{
 	
 	
@@ -34,9 +38,9 @@ public class View extends ViewGeneral{
 		else{
 			status = "incomplete";
 		}
-		display("======= Game " + game.gameID + " =======");
+		display("======================= Game " + game.gameID + " =======================");
 		display("status="  + status +  ", moneyStart="+ game.moneyStart + ", moneyCurrent=" + game.moneyCurrent + ", strategy=" + game.playingStrategy);
-		display("==================="); 
+		display("======================================================"); 
 	}
 	
 	public static void displayGameDetails(Game game){
@@ -51,14 +55,14 @@ public class View extends ViewGeneral{
 	}
 	
 	public static void displayRoundDetails(Round round){
-		display("---------Round "+ round.roundNumber + " results-----------");
+		display("------------------ Round "+ round.roundNumber + " results -------------------");
 		display("moneyStart=" + round.moneyStart + ", moneyEnd=" + round.moneyEnd
 		+ ", roundStatus=" + round.roundStatus);
 		for(Hand hand : round.hands){
 			display(hand);
 		}
 		display(round.dealerHand);
-		display("---------------------------------------------");
+		display("------------------------------------------------------");
 	}
 		
 
