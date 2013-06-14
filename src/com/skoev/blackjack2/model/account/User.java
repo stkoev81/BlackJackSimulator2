@@ -10,9 +10,9 @@ import java.util.List;
  */
 
 public class User {
-	public String username; 
-	public String password;
-	public List<Game> games = new ArrayList<Game>();
+	private String username; 
+	private String password;
+	private List<Game> games = new ArrayList<Game>();
 	
 	public User(String username, String password) {
 		this.username = username;
@@ -33,7 +33,7 @@ public class User {
 	private int getGameIndex(int gameId){
 		int i = 0;
 		for(Game game : games){
-			if(gameId == game.gameID){
+			if(gameId == game.getGameID()){
 				return i;
 			}
 			i++; 
@@ -44,8 +44,8 @@ public class User {
 	private int getNextGameId(){
 		int id = 0;
 		for(Game game : games){
-			if(game.gameID > id){
-				id = game.gameID;
+			if(game.getGameID() > id){
+				id = game.getGameID();
 			}
 		}
 		id = id + 1;
@@ -64,7 +64,7 @@ public class User {
 	}
 	//todo advanced: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
 	public void addNewGame(Game game){
-		game.gameID = getNextGameId();
+		game.setGameID(getNextGameId());
 		games.add(game);
 	}
 	
@@ -75,10 +75,20 @@ public class User {
 	public Collection<Integer> getGameIds(){
 		Collection<Integer> gameIds = new ArrayList<Integer>();
 		for(Game game : games){
-			gameIds.add(game.gameID);
+			gameIds.add(game.getGameID());
 		}
 		return gameIds;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+	
+	
 
 }
 

@@ -20,7 +20,7 @@ public class AccountService {
 	
 	public static User authenticateUser(String username, String password) {
 		User user = userRepository.getUser(username);
-		if(user == null || !user.password.equals(password)){
+		if(user == null || !user.getPassword().equals(password)){
 			return null;
 		}
 		else{

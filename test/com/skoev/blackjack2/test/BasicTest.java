@@ -21,11 +21,10 @@ public class BasicTest {
 						return 1;
 				}});
 		Game game = new Game(new PlayingStrategyInteractive(), 5, BigDecimal.valueOf(10));
-		game.deck  = testDeck;
 		do {
 			game.play();
 		}
-		while(game.userInputNeeded);
+		while(game.isUserInputNeeded());
 	}
 
 }

@@ -20,16 +20,16 @@ import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
  *
  */
 public class Round {
-	public int roundNumber;
-	public BigDecimal moneyStart;
-	public BigDecimal moneyEnd;
-	public RoundStatus roundStatus = RoundStatus.HAND_BEING_DEALT;
-	public Game game;
-	public List<Hand> hands = new ArrayList<Hand>(); 
-	public Hand dealerHand;
-	Queue<Hand> handsToProcess = new LinkedList<Hand>();
-	public Hand currentHand = null;
-	public List<Offer> availableOffers = Collections.EMPTY_LIST;
+	private int roundNumber;
+	private BigDecimal moneyStart;
+	private BigDecimal moneyEnd;
+	private RoundStatus roundStatus = RoundStatus.HAND_BEING_DEALT;
+	private Game game; 
+	private List<Hand> hands = new ArrayList<Hand>(); 
+	private Hand dealerHand;
+	private Queue<Hand> handsToProcess = new LinkedList<Hand>(); 
+	private Hand currentHand = null;
+	private List<Offer> availableOffers = Collections.EMPTY_LIST;
 	
 		
 	/**
@@ -37,7 +37,7 @@ public class Round {
 	 */
 	public Round(Game game) {
 		this.game = game;
-		this.moneyStart = game.moneyCurrent;
+		this.moneyStart = game.getMoneyCurrent();
 	}
 	public enum RoundStatus{
 		HAND_BEING_DEALT, HAND_BEING_INSURED, HANDS_BEING_PLAYED_OUT, HANDS_BEING_COMPARED_TO_DEALERS_HAND, ROUND_FINISHED;
@@ -45,12 +45,12 @@ public class Round {
 	public enum Offer{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
-	public void play(PlayingStrategy playingStrategy){
+	void play(PlayingStrategy playingStrategy){
 		switch(roundStatus){
 		case HAND_BEING_DEALT: 
 			BigDecimal betAmount = playingStrategy.respondToAmountBet();
 			if(betAmount == null){
-				game.userInputNeeded = true;
+				game.setUserInputNeeded(true);
 				return;
 			}
 			game.subtractMoney(betAmount);
@@ -64,7 +64,7 @@ public class Round {
 			if(availableOffers.size() > 0 ){
 				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
-					game.userInputNeeded = true;
+					game.setUserInputNeeded(true);
 					return;
 				}
 				applyOffer(playerResponse);
@@ -87,7 +87,7 @@ public class Round {
 				availableOffers = getAvailableOffers(currentHand, false);
 				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
-					game.userInputNeeded = true;
+					game.setUserInputNeeded(true);
 					return;
 				}
 				applyOffer(playerResponse); //in case of split, the handBeingResolved and handsToResolve will be changed
@@ -101,9 +101,9 @@ public class Round {
 				compareToDealerHandAndAdjustMoney(hand);
 			}
 			roundStatus = RoundStatus.ROUND_FINISHED;
-			moneyEnd = game.moneyCurrent;
+			moneyEnd = game.getMoneyCurrent();
 		}
-		game.userInputNeeded = false;
+		game.setUserInputNeeded(false);
 	}
 	private void applyOffer(Offer offer){
 		if(offer == null){
@@ -181,29 +181,29 @@ public class Round {
 		return offers;
 	}
 	private int calculateDealersHandPoints(){
-		if(dealerHand.cards.size() == 1){ //dealer might have already received 2nd card if there was insurance but otherwise only has 1 still
+		if(dealerHand.getCards().size() == 1){ //dealer might have already received 2nd card if there was insurance but otherwise only has 1 still
 			dealerHand.addCard(game.dealCard());
 		}
 		
-		if(dealerHand.finalPoints != null){ 
+		if(dealerHand.getFinalPoints() != null){ 
 			// dealer's value already revealed, so do nothing
 		}
 		else if(dealerHand.getCurrentPoints() > 16){
-			dealerHand.finalPoints = dealerHand.getCurrentPoints();
+			dealerHand.setFinalPoints(dealerHand.getCurrentPoints());
 		}
 		else{
 			while (dealerHand.getCurrentPoints() <= 16){ // dealer takes hit and stands as prescribed by casino rules: Hit on 16, stand on 17
 				dealerHand.addCard(game.dealCard());
 				if(dealerHand.getCurrentPoints() > 21){ //dealer busts
-					dealerHand.finalPoints = 0;
+					dealerHand.setFinalPoints(0);
 					break;
 				}
 				else {
-					dealerHand.finalPoints = dealerHand.getCurrentPoints();
+					dealerHand.setFinalPoints(dealerHand.getCurrentPoints());
 				}
 			}
 		}
-		return dealerHand.finalPoints;
+		return dealerHand.getFinalPoints();
 		
 	}
 	private void compareToDealerHandAndAdjustMoney(Hand hand){
@@ -212,7 +212,7 @@ public class Round {
 		if(hand.getCurrentPoints() > 21){ //automatic loss
 			// mark as lost, 0 points
 			hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
-			hand.finalPoints = 0;
+			hand.setFinalPoints(0);
 		}
 		
 		
@@ -221,22 +221,50 @@ public class Round {
 			if (hand.getCurrentPoints() < calculateDealersHandPoints()){
 				//loss, do nothing, value is alredy removed from stake
 				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
-				hand.finalPoints = 0;
+				hand.setFinalPoints(0);
 			}
 			else if(hand.getCurrentPoints() == calculateDealersHandPoints()){
 				//return to the stake what was already taken form it; essentially a push
 				hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
-				hand.finalPoints = hand.getCurrentPoints();
+				hand.setFinalPoints(hand.getCurrentPoints());
 				game.addMoney(hand.getAmountBet());
 			}
 			else {
 				//win (original amount + win)
 				hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
-				hand.finalPoints = hand.getCurrentPoints();
+				hand.setFinalPoints(hand.getCurrentPoints());
 				game.addMoney(hand.getAmountToBeWon());
 			}
 		}
 		
+	}
+	public int getRoundNumber() {
+		return roundNumber;
+	}
+	
+	public BigDecimal getMoneyStart() {
+		return moneyStart;
+	}
+	public BigDecimal getMoneyEnd() {
+		return moneyEnd;
+	}
+	public RoundStatus getRoundStatus() {
+		return roundStatus;
+	}
+	public List<Hand> getHands() {
+		return hands;
+	}
+	public Hand getDealerHand() {
+		return dealerHand;
+	}
+	public Hand getCurrentHand() {
+		return currentHand;
+	}
+	public List<Offer> getAvailableOffers() {
+		return availableOffers;
+	}
+	void setRoundNumber(int roundNumber) {
+		this.roundNumber = roundNumber;
 	}
 	
 }

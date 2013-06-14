@@ -32,22 +32,22 @@ public class GameTest {
 		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, true);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		game.play();
-		assertEquals(game.numRoundsPlayed, 1);
-		assertEquals(game.numRoundsToPlay, 1); 
-		assertEquals(game.pastRounds.size(), 1); 
-		assertEquals(game.userInputNeeded, false);
+		assertEquals(game.getNumRoundsPlayed(), 1);
+		assertEquals(game.getNumRoundsToPlay(), 1); 
+		assertEquals(game.getPastRounds().size(), 1); 
+		assertEquals(game.isUserInputNeeded(), false);
 		assertEquals(game.isFinished(), true);
 //		assertEquals(game.moneyStart, MONEY_10);
 //		assertEquals(game.moneyCurrent, MONEY_9);
-		assertNull(game.currentRound);
+		assertNull(game.getCurrentRound());
 		
-		Round round = game.pastRounds.get(0);
+		Round round = game.getPastRounds().get(0);
 //		assertEquals(round.moneyStart, MONEY_10);
 //		assertEquals(round.moneyEnd, MONEY_9);
-		assertEquals(round.roundStatus, Round.RoundStatus.ROUND_FINISHED);
-		assertNull(round.currentHand);
-		assertEquals(round.hands.size(), 1);
-		assertEquals(round.handsToProcess.size(), 1);
+		assertEquals(round.getRoundStatus(), Round.RoundStatus.ROUND_FINISHED);
+		assertNull(round.getCurrentHand());
+		assertEquals(round.getHands().size(), 1);
+		
 		
 		//test the winning and losing using the pre-made deck;
 		

@@ -38,30 +38,30 @@ public class View extends ViewGeneral{
 		else{
 			status = "incomplete";
 		}
-		display("======================= Game " + game.gameID + " =======================");
-		display("status="  + status +  ", moneyStart="+ game.moneyStart + ", moneyCurrent=" + game.moneyCurrent + ", strategy=" + game.playingStrategy);
+		display("======================= Game " + game.getGameID() + " =======================");
+		display("status="  + status +  ", moneyStart="+ game.getMoneyStart() + ", moneyCurrent=" + game.getMoneyCurrent() + ", strategy=" + game.getPlayingStrategy());
 		display("======================================================"); 
 	}
 	
 	public static void displayGameDetails(Game game){
 		displayGameSummary(game);
 		display("Game beginning.");
-		for(Round round : game.pastRounds){
+		for(Round round : game.getPastRounds()){
 			displayRoundDetails(round);
 		}
 		if(game.isFinished()){
-			display("Game end. numRoundsPlayed=" + game.numRoundsPlayed +  ", moneyCurrent=" + game.moneyCurrent);
+			display("Game end. numRoundsPlayed=" + game.getNumRoundsPlayed() +  ", moneyCurrent=" + game.getMoneyCurrent());
 		}
 	}
 	
 	public static void displayRoundDetails(Round round){
-		display("------------------ Round "+ round.roundNumber + " results -------------------");
-		display("moneyStart=" + round.moneyStart + ", moneyEnd=" + round.moneyEnd
-		+ ", roundStatus=" + round.roundStatus);
-		for(Hand hand : round.hands){
+		display("------------------ Round "+ round.getRoundNumber() + " results -------------------");
+		display("moneyStart=" + round.getMoneyStart() + ", moneyEnd=" + round.getMoneyEnd()
+		+ ", roundStatus=" + round.getRoundStatus());
+		for(Hand hand : round.getHands()){
 			display(hand);
 		}
-		display(round.dealerHand);
+		display(round.getDealerHand());
 		display("------------------------------------------------------");
 	}
 		

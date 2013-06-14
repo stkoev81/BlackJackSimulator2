@@ -37,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository{
 
 	@Override
 	public void saveUser(User user) {
-		users.put(user.username, user);
+		users.put(user.getUsername(), user);
 	}
 	
 	

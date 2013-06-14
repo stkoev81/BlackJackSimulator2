@@ -12,10 +12,10 @@ import java.util.List;
  *
  */
 public class Hand {
-	public int handNumber;
-	public BigDecimal amountBet;
-	public List<Card> cards = Collections.EMPTY_LIST;
-	public Integer finalPoints;
+	private int handNumber;
+	private BigDecimal amountBet;
+	private List<Card> cards = Collections.EMPTY_LIST;
+	private Integer finalPoints;
 
 	private HAND_OUTCOME handOutcome = null; 
 	private INSURANCE_OUTCOME insuranceOutcome = null; 
@@ -59,15 +59,15 @@ public class Hand {
 		return value; 
 	}
 	
-	public Card getFirstCard(){
+	Card getFirstCard(){
 		return cards.get(0);
 	}
 	
-	public boolean firstCardIsAce(){
+	boolean firstCardIsAce(){
 		return getFirstCard().getRank().equals(Rank.ACE);
 	}
 	
-	public boolean isEligibleForSplit(){
+	boolean isEligibleForSplit(){
 		if(cards.size() == 2 && (cards.get(0).getRank().equals(cards.get(1).getRank()))){
 			return true;
 		}
@@ -78,7 +78,7 @@ public class Hand {
 	 * Modifies this hand and returns new hand. The cards parameters passed in are used to complete two resulting hands. 
 	 * @return
 	 */
-	public Hand split(Card card1, Card card2, int handNumber){
+	Hand split(Card card1, Card card2, int handNumber){
 		if(!isEligibleForSplit()){
 			throw new RuntimeException("Splitting is not allowed for this hand");
 		}
@@ -93,7 +93,7 @@ public class Hand {
 		return hand2;
 	}
 	
-	public void addCard(Card card){
+	void addCard(Card card){
 		cards.add(card);
 	}
 
@@ -101,11 +101,11 @@ public class Hand {
 		return amountBet;
 	}
 	
-	public void setAmountBet(BigDecimal amountBet) {
+	void setAmountBet(BigDecimal amountBet) {
 		this.amountBet = amountBet;
 	}
 
-	public BigDecimal getAmountToBeWon(){
+	BigDecimal getAmountToBeWon(){
 		double amountBetDouble = amountBet.doubleValue();
 		BigDecimal result; 
 		if(getCurrentPoints() == 21){
@@ -120,27 +120,17 @@ public class Hand {
 			
 	}
 
-	public BigDecimal getInsureanceAmountBet(){
+	BigDecimal getInsureanceAmountBet(){
 		return amountBet.divide(BigDecimal.valueOf(2));
 	}
 	
-	public BigDecimal getInsuranceAmountWon(){
+	BigDecimal getInsuranceAmountWon(){
 		BigDecimal result = getInsureanceAmountBet().multiply(BigDecimal.valueOf(2));
 		result = result.add(getInsureanceAmountBet());
 		return result;
 	}
 
-	public HAND_OUTCOME getHandOutcome() {
-		return handOutcome;
-	}
-
-	
-	
-	public INSURANCE_OUTCOME getInsuranceOutcome() {
-		return insuranceOutcome;
-	}
-
-	public void setInsuranceOutcome(INSURANCE_OUTCOME insuranceOutcome) {
+	void setInsuranceOutcome(INSURANCE_OUTCOME insuranceOutcome) {
 		this.insuranceOutcome = insuranceOutcome;
 	}
 
@@ -180,6 +170,18 @@ public class Hand {
 
 	public void setHandOutcome(HAND_OUTCOME handOutcome) {
 		this.handOutcome = handOutcome;
+	}
+
+	Integer getFinalPoints() {
+		return finalPoints;
+	}
+
+	void setFinalPoints(Integer finalPoints) {
+		this.finalPoints = finalPoints;
+	}
+
+	public List<Card> getCards() {
+		return cards;
 	}
 
 	

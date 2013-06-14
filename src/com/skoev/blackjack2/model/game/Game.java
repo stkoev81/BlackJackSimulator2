@@ -12,16 +12,16 @@ import java.util.List;
  *
  */
 public class Game {
-	public int gameID = 1; 
-	public int numRoundsPlayed; 
-	public final int numRoundsToPlay; 
-	public BigDecimal moneyStart;
-	public BigDecimal moneyCurrent;
-	public Round currentRound;
-	public List<Round> pastRounds = new ArrayList();
-	public PlayingStrategy playingStrategy;
-	public Deck deck = new Deck();
-	public boolean userInputNeeded = false;
+	private int gameID = 1; 
+	private int numRoundsPlayed; 
+	private final int numRoundsToPlay; 
+	private BigDecimal moneyStart;
+	private BigDecimal moneyCurrent;
+	private Round currentRound;
+	private List<Round> pastRounds = new ArrayList();
+	private PlayingStrategy playingStrategy;
+	private Deck deck = new Deck();
+	private boolean userInputNeeded = false;
 	
 	public boolean isInteractive(){
 		return playingStrategy.isInteractive();
@@ -47,7 +47,7 @@ public class Game {
 		while (!isFinished() && !userInputNeeded){
 			if (currentRound == null){
 				currentRound = new Round(this);
-				currentRound.roundNumber = numRoundsPlayed +1;
+				currentRound.setRoundNumber(numRoundsPlayed + 1);
 			}
 			currentRound.play(playingStrategy);
 			if(!userInputNeeded){
@@ -65,15 +65,66 @@ public class Game {
 		return numRoundsPlayed >= numRoundsToPlay || moneyCurrent.doubleValue() <= 0;
 	}
 	
-	public void addMoney(BigDecimal money) {
+	void addMoney(BigDecimal money) {
 		moneyCurrent = moneyCurrent.add(money);
 	}
-	public void subtractMoney(BigDecimal money){
+	void subtractMoney(BigDecimal money){
 		moneyCurrent = moneyCurrent.subtract(money);
 	}
 	
-	public Card dealCard(){
+	Card dealCard(){
 		return deck.nextCard(); 
 	}
+
+	public int getGameID() {
+		return gameID;
+	}
+
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
+	}
+
+	public int getNumRoundsPlayed() {
+		return numRoundsPlayed;
+	}
+
+	public int getNumRoundsToPlay() {
+		return numRoundsToPlay;
+	}
+
+	public BigDecimal getMoneyStart() {
+		return moneyStart;
+	}
+
+	public BigDecimal getMoneyCurrent() {
+		return moneyCurrent;
+	}
+
+	public boolean isUserInputNeeded() {
+		return userInputNeeded;
+	}
+
+	void setUserInputNeeded(boolean userInputNeeded) {
+		this.userInputNeeded = userInputNeeded;
+	}
+
+	public Round getCurrentRound() {
+		return currentRound;
+	}
+
+	public List<Round> getPastRounds() {
+		return pastRounds;
+	}
+
+	public PlayingStrategy getPlayingStrategy() {
+		return playingStrategy;
+	}
+
+	void setDeck(Deck deck) {
+		this.deck = deck;
+	}
+	
+	
+	
 
 }
