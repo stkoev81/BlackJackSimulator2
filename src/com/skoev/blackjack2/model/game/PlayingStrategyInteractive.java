@@ -24,7 +24,7 @@ public class PlayingStrategyInteractive extends PlayingStrategy {
 	@Override
 	public Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand){
 		Round.Offer result = responseToOffer;
-    responseToOffer = null;
+		responseToOffer = null;
 		return result;
 	}
 	@Override

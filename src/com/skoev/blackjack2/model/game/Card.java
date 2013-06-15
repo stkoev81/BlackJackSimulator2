@@ -33,6 +33,27 @@ public class Card {
 	public String toString() {
 		return "[" + rank + " OF " + suit + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Card other = (Card) obj;
+		if (rank != other.rank)
+			return false;
+		if (suit != other.suit)
+			return false;
+		return true;
+	}
+	
+	
 	
 	
 	

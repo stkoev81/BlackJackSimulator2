@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.test;
+package com.skoev.blackjack2.model.game;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,10 +15,10 @@ import com.skoev.blackjack2.model.game.*;
  * @author stefan.t.koev
  *
  */
-public class TestDeck extends Deck {
+public class MockDeckVaried extends Deck {
 	private Iterator<Card> it;
 	
-	public TestDeck(Rank[] ranks){
+	public MockDeckVaried(Rank ... ranks){
 		if (ranks == null) {
 			cards = Collections.EMPTY_LIST;
 		}
@@ -28,7 +28,7 @@ public class TestDeck extends Deck {
 				if (rank == null){
 					continue;
 				}
-				cards.add(new Card(Suit.CLUBS, rank));
+				cards.add(new Card(Suit.HEARTS, rank));
 			}
 		}
 		it = cards.iterator(); 

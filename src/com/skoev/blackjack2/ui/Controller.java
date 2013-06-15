@@ -229,7 +229,7 @@ public class Controller {
 						ViewGeneral.displayHeader("Interactive game screen");
 					}
 					else{
-						Round previousRound = game.getPastRounds().get(n-1);
+						Round previousRound = game.getLastRound();
 						View.displayRoundDetails(previousRound);
 					}
 					strategy.setAmountBet(View.getAmountBet(game.getGameID(), round.getRoundNumber()));

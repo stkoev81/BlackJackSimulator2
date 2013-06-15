@@ -168,9 +168,10 @@ public class Hand {
 		
 	}
 
-	public void setHandOutcome(HAND_OUTCOME handOutcome) {
+	void setHandOutcome(HAND_OUTCOME handOutcome) {
 		this.handOutcome = handOutcome;
 	}
+	
 
 	Integer getFinalPoints() {
 		return finalPoints;
@@ -182,6 +183,36 @@ public class Hand {
 
 	public List<Card> getCards() {
 		return cards;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Hand other = (Hand) obj;
+		if (cards == null) {
+			if (other.cards != null)
+				return false;
+		} else if (!cards.equals(other.cards))
+			return false;
+		return true;
+	}
+
+	public HAND_OUTCOME getHandOutcome() {
+		return handOutcome;
+	}
+
+	public INSURANCE_OUTCOME getInsuranceOutcome() {
+		return insuranceOutcome;
 	}
 
 	

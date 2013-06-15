@@ -35,7 +35,6 @@ public class Game {
 	}
 	
 	
-	//todo normal: add getters and setters and set proper visibility
 	//todo normal: comment
 	//todo normal: add more tests
 	//todo normal: verify model validations (e.g. not playing if not enough money). 
@@ -75,6 +74,16 @@ public class Game {
 	Card dealCard(){
 		return deck.nextCard(); 
 	}
+	
+	public Round getLastRound(){
+		int length = pastRounds.size();
+		if(length == 0){
+			return null;
+		}
+		Round round = pastRounds.get(length - 1);
+		return round;
+	}
+	
 
 	public int getGameID() {
 		return gameID;

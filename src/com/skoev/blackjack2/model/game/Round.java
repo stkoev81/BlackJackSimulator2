@@ -103,7 +103,6 @@ public class Round {
 			roundStatus = RoundStatus.ROUND_FINISHED;
 			moneyEnd = game.getMoneyCurrent();
 		}
-		game.setUserInputNeeded(false);
 	}
 	private void applyOffer(Offer offer){
 		if(offer == null){
@@ -221,7 +220,7 @@ public class Round {
 			if (hand.getCurrentPoints() < calculateDealersHandPoints()){
 				//loss, do nothing, value is alredy removed from stake
 				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
-				hand.setFinalPoints(0);
+				hand.setFinalPoints(hand.getCurrentPoints());
 			}
 			else if(hand.getCurrentPoints() == calculateDealersHandPoints()){
 				//return to the stake what was already taken form it; essentially a push
@@ -238,6 +237,14 @@ public class Round {
 		}
 		
 	}
+			
+	public Hand getHand(int handNumber){
+		if(handNumber < 1 || handNumber > hands.size()){
+			return null;
+		}
+		return hands.get(handNumber - 1); 
+	}
+	
 	public int getRoundNumber() {
 		return roundNumber;
 	}
