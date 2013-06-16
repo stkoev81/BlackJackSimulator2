@@ -23,9 +23,9 @@ public class Controller {
 		new Controller().startApplication();
 	}
 	
-	private static enum Option{login, help, createAccount, startGame, exit, view_details, start_new, log_out, delete_game, continue_game, home_screen}
+	private static enum Option{LOGIN, HELP, CREATE_ACCOUNT, START_GAME, EXIT, VIEW_DETAILS, START_NEW, LOG_OUT, DELETE_GAME, CONTINUE_GAME, HOME_SCREEN}
 	
-	private static enum Strategy{interactive, predictable}
+	private static enum Strategy{INTERACTIVE, FIXED}
 	
 	public void startApplication(){
 		boolean end = false; 
@@ -33,20 +33,20 @@ public class Controller {
 			try{
 				ViewGeneral.displayHeader("Main screen"); 
 				String message = "This is a blackjack simulation game.";
-				Option[] options = {Option.help, Option.login, Option.createAccount, Option.exit};
+				Option[] options = {Option.HELP, Option.LOGIN, Option.CREATE_ACCOUNT, Option.EXIT};
 				Option option = ViewGeneral.getOption(options, message);
 				ViewGeneral.displayFooter();
 				switch (option){
-				case login : 
+				case LOGIN : 
 					logIn();
 					break;
-				case help : 
+				case HELP : 
 					showHelp();
 					break;
-				case createAccount :
+				case CREATE_ACCOUNT :
 					createAccount();
 					break;
-				case exit :
+				case EXIT :
 					end = true;
 					break;
 				}
@@ -124,15 +124,15 @@ public class Controller {
 				ViewGeneral.displayHeader("User's home screen");
 				View.displayGameSummary(GameService.getGames(user));
 				String message = "You can view (and continue if inccomplete) an existing game or start a new one.";
-				Option[] options = {Option.log_out, Option.view_details, Option.start_new};
+				Option[] options = {Option.LOG_OUT, Option.VIEW_DETAILS, Option.START_NEW};
 				option = ViewGeneral.getOption(options, message);
 				switch(option){
-					case log_out:
+					case LOG_OUT:
 						end = true;
 						user = null;
 						ViewGeneral.displayFooter();
 						break;
-					case view_details:
+					case VIEW_DETAILS:
 						Collection<Integer> gameIds = GameService.getGameIds(user);  
 						if(gameIds.size()>0){
 							int whichGame = ViewGeneral.getPositiveInteger(gameIds, "Which game number?");
@@ -144,7 +144,7 @@ public class Controller {
 							ViewGeneral.displayFooter();
 						}
 						break;
-					case start_new:
+					case START_NEW:
 						ViewGeneral.displayFooter();
 						startNewGame();
 						break;
@@ -160,18 +160,18 @@ public class Controller {
 		Game game = GameService.getGame(gameId, user);
 		View.displayGameDetails(game);
 		String message = "You can delete or continue (if incomplete) the game";
-		Option[] options = {Option.home_screen, Option.delete_game, Option.continue_game};
+		Option[] options = {Option.HOME_SCREEN, Option.DELETE_GAME, Option.CONTINUE_GAME};
 		Option option = ViewGeneral.getOption(options, message);
 		switch(option){
-			case home_screen: 
+			case HOME_SCREEN: 
 				ViewGeneral.displayFooter();
 				break;
-			case delete_game:
+			case DELETE_GAME:
 				GameService.deleteGame(gameId, user);
 				ViewGeneral.display("Deleted game " + gameId);
 				ViewGeneral.displayFooter();
 				break;
-			case continue_game:
+			case CONTINUE_GAME:
 				ViewGeneral.display("Continuing game " + gameId);
 				if(game.isFinished()){
 					ViewGeneral.display("This game is finished! Cannot continue it.");
@@ -186,7 +186,7 @@ public class Controller {
 	}
 	
 	private void startNewGame(){
-		Strategy[] options = {Strategy.interactive, Strategy.predictable};
+		Strategy[] options = {Strategy.INTERACTIVE, Strategy.FIXED};
 		String message = "You must choose a game type.";
 		ViewGeneral.displayHeader("Start new game screen");
 		Strategy option = ViewGeneral.getOption(options, message);
@@ -195,18 +195,18 @@ public class Controller {
 		BigDecimal money = ViewGeneral.getAmount("Enter starting money:");
 		int numRounds = ViewGeneral.getPositiveInteger("Enter number of rounds to play:");
 		
-		if(option.equals(Strategy.interactive)){
+		if(option.equals(Strategy.INTERACTIVE)){
 			playingStrategy = new PlayingStrategyInteractive();
 		} 
 		
-		if(option.equals(Strategy.predictable)){
+		if(option.equals(Strategy.FIXED)){
 			message = "Accept insurance?";
 			Boolean acceptInsurance =  ViewGeneral.getOption(new Boolean[]{Boolean.TRUE, Boolean.FALSE}, message);
 			message = "Default response to offer?";
 			Round.Offer defaultOffer = ViewGeneral.getOption(new Round.Offer[]{Round.Offer.STAND, Round.Offer.HIT, Round.Offer.DOUBLE }, message);
 			message = "Default amount of bet?"; 
 			BigDecimal defaultBet = ViewGeneral.getAmount(message);
-			playingStrategy = new PlayingStrategyPredictable(defaultOffer, defaultBet, acceptInsurance);
+			playingStrategy = new PlayingStrategyFixed(defaultOffer, defaultBet, acceptInsurance);
 		}
 		Game game = new Game(playingStrategy, numRounds, money);
 		GameService.addNewGame(game, user);

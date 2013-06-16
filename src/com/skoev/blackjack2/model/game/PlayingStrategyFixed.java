@@ -5,12 +5,12 @@ import java.util.Collection;
 
 import com.skoev.blackjack2.model.game.Round.Offer;
 
-public class PlayingStrategyPredictable extends PlayingStrategy {
+public class PlayingStrategyFixed extends PlayingStrategy {
 	private Round.Offer defaultOffer;
 	private BigDecimal defaultBet;
 	private boolean acceptInsurace; 
 	
-	public PlayingStrategyPredictable(Round.Offer defaultOffer, BigDecimal defaultBet, boolean acceptInsurace){
+	public PlayingStrategyFixed(Round.Offer defaultOffer, BigDecimal defaultBet, boolean acceptInsurace){
 		this.defaultOffer = defaultOffer;
 		this.defaultBet = defaultBet;
 		this.acceptInsurace = acceptInsurace;

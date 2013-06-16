@@ -38,7 +38,7 @@ public class GameTest {
 	@Test
 	public void testNumRounds() {
 		//test number of rounds played (1 round)
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, false);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		game.play();
 		assertEquals(game.getNumRoundsPlayed(), 1);
@@ -53,7 +53,7 @@ public class GameTest {
 		assertEquals(round.getHands().size(), 1);
 		
 		//test number of rounds played (5 rounds)
-		playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, false);
+		playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		game = new Game(playingStrategy, 5, MONEY_10);
 		game.play();
 		assertEquals(game.getNumRoundsPlayed(), 5);
@@ -68,7 +68,7 @@ public class GameTest {
 		assertEquals(round.getHands().size(), 1);
 		
 		//test number of rounds played (money runs out)
-		playingStrategy = new PlayingStrategyPredictable(Round.Offer.HIT, MONEY_1, false);
+		playingStrategy = new PlayingStrategyFixed(Round.Offer.HIT, MONEY_1, false);
 		game = new Game(playingStrategy, 20, MONEY_10);
 		game.setDeck(new MockDeckFixed(Rank.TEN)); // by getting only 10s and hitting each time will definitely lose
 		game.play();
@@ -124,7 +124,7 @@ public class GameTest {
 	
 	@Test
 	public void testHandWin(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, false);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.TWO, Rank.TEN, Rank.NINE, Rank.SIX, Rank.NINE); 
 		game.setDeck(deck); 
@@ -155,7 +155,7 @@ public class GameTest {
 	
 	@Test
 	public void testHandLose(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, false);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.NINE, Rank.EIGHT); 
 		game.setDeck(deck); 
@@ -186,7 +186,7 @@ public class GameTest {
 	
 	@Test
 	public void testHandPush(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, false);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.ACE, Rank.TEN, Rank.ACE, Rank.JACK); 
 		game.setDeck(deck); 
@@ -217,7 +217,7 @@ public class GameTest {
 	
 	@Test
 	public void testInsuranceWinGameLose(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, true);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, true);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.ACE, Rank.JACK); 
 		game.setDeck(deck); 
@@ -248,7 +248,7 @@ public class GameTest {
 	
 	@Test
 	public void testInsuranceLoseGameLose(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.STAND, MONEY_1, true);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, true);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.ACE, Rank.EIGHT); 
 		game.setDeck(deck); 
@@ -279,7 +279,7 @@ public class GameTest {
 
 	@Test
 	public void testHandDouble(){
-		PlayingStrategy playingStrategy = new PlayingStrategyPredictable(Round.Offer.DOUBLE, MONEY_1, false);
+		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.DOUBLE, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.TEN, Rank.TWO, Rank.EIGHT); 
 		game.setDeck(deck); 
