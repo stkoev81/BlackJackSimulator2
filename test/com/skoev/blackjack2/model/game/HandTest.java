@@ -20,10 +20,13 @@ public class HandTest {
 
 	@Test
 	public void testPointCalculation() {
-		//assertEquals(11, (new Hand(null, 0, toCards(Rank.ACE)).getCurrentPoints()));   this one is not necessary - never a single card in a hand
-//		assertEquals(12, (new Hand(null, 0, toCards(Rank.ACE, Rank.ACE)).getCurrentPoints()));
-		assertEquals(21, (new Hand(null, 0, toCards(Rank.ACE, Rank.JACK)).getCurrentPoints()));
-		assertEquals(13, (new Hand(null, 0, toCards(Rank.ACE, Rank.JACK, Rank.TWO)).getCurrentPoints()));
+		assertEquals(20, (new Hand(null, 0, toCards(Rank.ACE, Rank.NINE)).calculateCurrentPoints()));
+		assertEquals(21, (new Hand(null, 0, toCards(Rank.ACE, Rank.JACK)).calculateCurrentPoints()));
+		assertEquals(12, (new Hand(null, 0, toCards(Rank.ACE, Rank.ACE)).calculateCurrentPoints()));
+		assertEquals(13, (new Hand(null, 0, toCards(Rank.ACE, Rank.ACE, Rank.ACE)).calculateCurrentPoints()));
+		assertEquals(14, (new Hand(null, 0, toCards(Rank.ACE, Rank.ACE, Rank.ACE, Rank.ACE)).calculateCurrentPoints()));
+		assertEquals(12, (new Hand(null, 0, toCards(Rank.ACE, Rank.NINE, Rank.TWO)).calculateCurrentPoints()));
+		assertEquals(21, (new Hand(null, 0, toCards(Rank.ACE, Rank.NINE, Rank.ACE)).calculateCurrentPoints()));
 	}
 	
 	public static Card[] toCards(Rank ... ranks){

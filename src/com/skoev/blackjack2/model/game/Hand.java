@@ -32,30 +32,34 @@ public class Hand {
 		}
 	}
 	
-	//todo normal: handle the cases where there are multiple aces 
-	public int getCurrentPoints(){
-		int value = 0; 
+	/**
+	 * Calculates points of a hand according to the rules of blackjack. Each numbered card has that number of points, each face card 
+	 * has 10 points, and an ACE can have either 1 or 10 points (whichever gives the hand more points without pushing it over 21).   
+	 * @return
+	 */
+	public int calculateCurrentPoints(){
+		int valueNonAces = 0; 
+		int numAces = 0;
+		int tempValue = 0;
+		int value = 0;
 		for(Card card : cards){
-			if(card.getValue() != null){
-				value = card.getValue() + value;
+			if(!Rank.ACE.equals(card.getRank())){
+				valueNonAces = card.getValue() + valueNonAces;
 			}
 			else {
-				value = value + 11; 
-			}
-		}
-		if(value<=21){
-			return value;
-		}
-		value = 0;
-		for(Card card : cards){
-			if(card.getValue() != null){
-				value = card.getValue() + value;
-			}
-			else {
-				value = value + 1; 
+				numAces++; 
 			}
 		}
 		
+		for(int i=0; i<=numAces; i++){
+			tempValue = i*11 + (numAces-i)*1 + valueNonAces;
+			if(tempValue <= 21 || i == 0){
+				value = tempValue;
+			}
+			if(tempValue > 21){
+				break;
+			}
+		}
 		return value; 
 	}
 	
@@ -108,7 +112,7 @@ public class Hand {
 	BigDecimal getAmountToBeWon(){
 		double amountBetDouble = amountBet.doubleValue();
 		BigDecimal result; 
-		if(getCurrentPoints() == 21){
+		if(calculateCurrentPoints() == 21){
 			//won 1.5*amountBet + amountBet
 			result = amountBet.multiply(BigDecimal.valueOf(2.5));
 		}
@@ -120,13 +124,13 @@ public class Hand {
 			
 	}
 
-	BigDecimal getInsureanceAmountBet(){
+	BigDecimal getInsuranceAmountBet(){
 		return amountBet.divide(BigDecimal.valueOf(2));
 	}
 	
-	BigDecimal getInsuranceAmountWon(){
-		BigDecimal result = getInsureanceAmountBet().multiply(BigDecimal.valueOf(2));
-		result = result.add(getInsureanceAmountBet());
+	BigDecimal getInsuranceAmountToBeWon(){
+		BigDecimal result = getInsuranceAmountBet().multiply(BigDecimal.valueOf(2));
+		result = result.add(getInsuranceAmountBet());
 		return result;
 	}
 

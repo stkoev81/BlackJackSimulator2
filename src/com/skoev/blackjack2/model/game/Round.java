@@ -106,17 +106,20 @@ public class Round {
 	}
 	private void applyOffer(Offer offer){
 		if(offer == null){
-			return;
+			throw new IllegalArgumentException();
+		}
+		if(!availableOffers.contains(offer)){
+			throw new IllegalStateException();
 		}
 		
 		switch(offer){
 		case ACCEPT_INSURANCE:
 			
-			game.subtractMoney(currentHand.getInsureanceAmountBet());
+			game.subtractMoney(currentHand.getInsuranceAmountBet());
 			dealerHand.addCard(game.dealCard());
 			
-			if(dealerHand.getCurrentPoints() == 21){ // insurance won
-				game.addMoney(currentHand.getInsuranceAmountWon());
+			if(dealerHand.calculateCurrentPoints() == 21){ // insurance won
+				game.addMoney(currentHand.getInsuranceAmountToBeWon());
 				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.WIN);
 			}
 			else { // insurance lost
@@ -135,7 +138,7 @@ public class Round {
 			break;
 		case HIT:
 			currentHand.addCard(game.dealCard());
-			if(currentHand.getCurrentPoints() > 21 || currentHand.getCurrentPoints() == 21){
+			if(currentHand.calculateCurrentPoints() > 21 || currentHand.calculateCurrentPoints() == 21){
 				currentHand = null; //we're done with playing this hand
 			}
 			else{
@@ -187,18 +190,18 @@ public class Round {
 		if(dealerHand.getFinalPoints() != null){ 
 			// dealer's value already revealed, so do nothing
 		}
-		else if(dealerHand.getCurrentPoints() > 16){
-			dealerHand.setFinalPoints(dealerHand.getCurrentPoints());
+		else if(dealerHand.calculateCurrentPoints() > 16){
+			dealerHand.setFinalPoints(dealerHand.calculateCurrentPoints());
 		}
 		else{
-			while (dealerHand.getCurrentPoints() <= 16){ // dealer takes hit and stands as prescribed by casino rules: Hit on 16, stand on 17
+			while (dealerHand.calculateCurrentPoints() <= 16){ // dealer takes hit and stands as prescribed by casino rules: Hit on 16, stand on 17
 				dealerHand.addCard(game.dealCard());
-				if(dealerHand.getCurrentPoints() > 21){ //dealer busts
+				if(dealerHand.calculateCurrentPoints() > 21){ //dealer busts
 					dealerHand.setFinalPoints(0);
 					break;
 				}
 				else {
-					dealerHand.setFinalPoints(dealerHand.getCurrentPoints());
+					dealerHand.setFinalPoints(dealerHand.calculateCurrentPoints());
 				}
 			}
 		}
@@ -208,7 +211,7 @@ public class Round {
 	private void compareToDealerHandAndAdjustMoney(Hand hand){
 		// 
 
-		if(hand.getCurrentPoints() > 21){ //automatic loss
+		if(hand.calculateCurrentPoints() > 21){ //automatic loss
 			// mark as lost, 0 points
 			hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
 			hand.setFinalPoints(0);
@@ -217,21 +220,21 @@ public class Round {
 		
 		// compare to dealer's hand, mark as won or push, adjust money
 		else {//compare to dealer's hand
-			if (hand.getCurrentPoints() < calculateDealersHandPoints()){
+			if (hand.calculateCurrentPoints() < calculateDealersHandPoints()){
 				//loss, do nothing, value is alredy removed from stake
 				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
-				hand.setFinalPoints(hand.getCurrentPoints());
+				hand.setFinalPoints(hand.calculateCurrentPoints());
 			}
-			else if(hand.getCurrentPoints() == calculateDealersHandPoints()){
+			else if(hand.calculateCurrentPoints() == calculateDealersHandPoints()){
 				//return to the stake what was already taken form it; essentially a push
 				hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
-				hand.setFinalPoints(hand.getCurrentPoints());
+				hand.setFinalPoints(hand.calculateCurrentPoints());
 				game.addMoney(hand.getAmountBet());
 			}
 			else {
 				//win (original amount + win)
 				hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
-				hand.setFinalPoints(hand.getCurrentPoints());
+				hand.setFinalPoints(hand.calculateCurrentPoints());
 				game.addMoney(hand.getAmountToBeWon());
 			}
 		}
