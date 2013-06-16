@@ -33,7 +33,7 @@ public class PlayingStrategyInteractive extends PlayingStrategy {
 	}
 	@Override
 	public String toString() {
-		return "PlayingStrategyInteractive";
+		return "PlayingStrategyFixed";
 	}
 	@Override
 	public void setAmountBet(BigDecimal amountBet) {

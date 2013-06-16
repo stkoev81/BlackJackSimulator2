@@ -25,7 +25,7 @@ public class Controller {
 	
 	private static enum Option{LOGIN, HELP, CREATE_ACCOUNT, START_GAME, EXIT, VIEW_DETAILS, START_NEW, LOG_OUT, DELETE_GAME, CONTINUE_GAME, HOME_SCREEN}
 	
-	private static enum Strategy{INTERACTIVE, FIXED}
+	private static enum Strategy{INTERACTIVE, FIXED, THRESHOLD}
 	
 	public void startApplication(){
 		boolean end = false; 
@@ -186,7 +186,7 @@ public class Controller {
 	}
 	
 	private void startNewGame(){
-		Strategy[] options = {Strategy.INTERACTIVE, Strategy.FIXED};
+		Strategy[] options = {Strategy.INTERACTIVE, Strategy.FIXED, Strategy.THRESHOLD};
 		String message = "You must choose a game type.";
 		ViewGeneral.displayHeader("Start new game screen");
 		Strategy option = ViewGeneral.getOption(options, message);
@@ -208,6 +208,15 @@ public class Controller {
 			BigDecimal defaultBet = ViewGeneral.getAmount(message);
 			playingStrategy = new PlayingStrategyFixed(defaultOffer, defaultBet, acceptInsurance);
 		}
+		
+		if(option.equals(Strategy.THRESHOLD)){
+			message = "Threshold?";
+			int threshold =  ViewGeneral.getPositiveInteger(message);
+			message = "Default amount of bet?"; 
+			BigDecimal defaultBet = ViewGeneral.getAmount(message);
+			playingStrategy = new PlayingStrategyThreshold(threshold, defaultBet);
+		} 
+		
 		Game game = new Game(playingStrategy, numRounds, money);
 		GameService.addNewGame(game, user);
 		ViewGeneral.displayFooter();
