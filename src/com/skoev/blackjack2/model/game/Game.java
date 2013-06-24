@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.skoev.blackjack2.util.Util;
 /**
- * The main class in the BlackJack model. Provides functionality for playing a single blackjack game. 
- * 
- * @author stefan.t.koev
+ * The main class in the BlackJack model. Provides functionality for playing a single blackjack game. A game contains multiple rounds: the round that
+ * is currently being played and any past rounds. A game is also associated with a playing strategy. This strategy is consulted to determine how much
+ * money the player bets and and which offer the player chooses.    
  *
  */
 public class Game {
@@ -21,60 +23,102 @@ public class Game {
 	private List<Round> pastRounds = new ArrayList();
 	private PlayingStrategy playingStrategy;
 	private Deck deck = new Deck();
-	private boolean userInputNeeded = false;
 	
+	/**
+	 * @return true if the associated playing strategy is interactive; false otherwise   
+	 */
 	public boolean isInteractive(){
 		return playingStrategy.isInteractive();
 	}
 	
+	/**
+	 * @param playingStrategy The playing strategy that models the player behavior.
+	 * @param numRoundsToPlay Maximum number of rounds that will be played. 
+	 * @param moneyStart The amount of money the user has at the beginning of the game.  
+	 */
 	public Game(PlayingStrategy playingStrategy, int numRoundsToPlay, BigDecimal moneyStart){
+		Util.assertNotNull(playingStrategy);
+		Util.assertNotNull(moneyStart);
+		Util.assertTrue(moneyStart.compareTo(BigDecimal.valueOf(0)) > 0);
+		Util.assertTrue(numRoundsToPlay > 0);
+		
 		this.moneyStart = moneyStart;
 		this.moneyCurrent = moneyStart;
 		this.playingStrategy = playingStrategy;
 		this.numRoundsToPlay = numRoundsToPlay;
 	}
 	
-	
-	//todo normal: comment
-	//todo normal: add more tests
-	//todo normal: verify model validations (e.g. not playing if not enough money). 
-	public void play(){
+	/**
+	 * Plays this game using the associated playing strategy. When a round is finished, another one is automatically started and so on until the game is finished.  
+	 * When this method returns, one of the following is true: 1)The game is finished ({@link #isFinished()} returns true.) 2) User input is needed (
+	 * {@link #isUserInputNeeded()}) returns true). In the second case, the game is essentially paused and this method should be called again to continue it
+	 * once user input has been supplied to the associated playing strategy. 
+	 * @throws InsufficientMoneyException If the playing strategy tries to make a bet that exceeds the current money of the game.
+	 * @throws IllegalStateException if this game is already finished 
+	 */
+	public void play() throws InsufficientMoneyException{
 		if (isFinished()){
-			throw new RuntimeException("this game is already finished. Cannot continue playing");
+			throw new IllegalStateException();
 		}
-		userInputNeeded = false;
-		while (!isFinished() && !userInputNeeded){
+		while (!isFinished() && !isUserInputNeeded()){
 			if (currentRound == null){
 				currentRound = new Round(this);
 				currentRound.setRoundNumber(numRoundsPlayed + 1);
 			}
-			currentRound.play(playingStrategy);
-			if(!userInputNeeded){
+			try{
+				currentRound.play(playingStrategy);
+			}
+			catch(InsufficientMoneyException e){
+				if(playingStrategy.isInteractive()){
+					playingStrategy.setIsUserInputNeeded(true);
+				}
+				throw e;
+			}
+			if(!isUserInputNeeded()){
 				numRoundsPlayed ++;
 				pastRounds.add(currentRound);
-				
 				currentRound = null; //round is finished
-				
-				
 			}
 		}
 	}
-	
+	/**
+	 * @return true if the currentMoney is depleted to 0 or the number of rounds to play has been reached and there is no no current round; false otherwise
+	 */
 	public boolean isFinished(){
-		return numRoundsPlayed >= numRoundsToPlay || moneyCurrent.doubleValue() <= 0;
+		return ((numRoundsPlayed >= numRoundsToPlay) || (moneyCurrent.compareTo(BigDecimal.ZERO) <= 0)) && currentRound == null;
 	}
 	
+	/**
+	 * Adds money to the game, e.g. due to a win. 
+	 * @param money
+	 */
 	void addMoney(BigDecimal money) {
 		moneyCurrent = moneyCurrent.add(money);
 	}
-	void subtractMoney(BigDecimal money){
+	/**
+	 * Subtracts money from the game, e.g. to place a bet or to pay for insurance. 
+	 * @param money
+	 * @throws InsufficientMoneyException if the money we are trying to subtract exceed the current money. 
+	 */
+	void subtractMoney(BigDecimal money) throws InsufficientMoneyException{
+		if (moneyCurrent.compareTo(money) < 0){
+			throw new InsufficientMoneyException();
+		} 
 		moneyCurrent = moneyCurrent.subtract(money);
 	}
 	
+	/**
+	 * Deal a new card from the deck. 
+	 * @return
+	 */
 	Card dealCard(){
 		return deck.nextCard(); 
 	}
 	
+	/**
+	 * Retrieve the last completed round. 
+	 * @return
+	 */
 	public Round getLastRound(){
 		int length = pastRounds.size();
 		if(length == 0){
@@ -84,7 +128,6 @@ public class Game {
 		return round;
 	}
 	
-
 	public int getGameID() {
 		return gameID;
 	}
@@ -109,12 +152,11 @@ public class Game {
 		return moneyCurrent;
 	}
 
+	/**
+	 * Tells us if user input is needed in order to continue the game. Calls {@link PlayingStrategy#isUserInputNeeded()} for the associated playing strategy.  
+	 */
 	public boolean isUserInputNeeded() {
-		return userInputNeeded;
-	}
-
-	void setUserInputNeeded(boolean userInputNeeded) {
-		this.userInputNeeded = userInputNeeded;
+		return playingStrategy.isUserInputNeeded();
 	}
 
 	public Round getCurrentRound() {
@@ -129,6 +171,10 @@ public class Game {
 		return playingStrategy;
 	}
 
+	/**
+	 * Method to supply different deck implementations for testing purposes. 
+	 * @param deck
+	 */
 	void setDeck(Deck deck) {
 		this.deck = deck;
 	}

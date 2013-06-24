@@ -9,34 +9,25 @@ import java.util.Random;
 
 
 /**
- * 
- * @author stefan.t.koev
+ * Models a standard deck of cards that is used to deal cards in blackjack game. The deck consists of the normal 52 cards, and the card to be dealt is chosen
+ * using a random number generator. When a card is dealt, it is not removed from the deck, so the probability from withdrawing a card stays constant over time. 
+ * In a physical blackjack game, normally multiple decks of cards are mixed together to form a very large deck so the probability doesn't change much over time. 
  *
  */
-public class Deck {
+class Deck {
 	private Random ng; 
 	protected List<Card> cards;
+	
 	public Deck(){
 		this.ng = new Random();
 		cards = getStandardDeckCards();
 	}
-	public Deck(Random ng){
-		this.ng = ng;
-		cards = getStandardDeckCards();
-	}
 	
-	public Deck(Random ng, List<Card> cards){
-		this.ng = ng;
-		this.cards = cards;
-	}
-	
-	public Deck(List<Card> cards){
-		this.ng = new Random();
-		this.cards = cards;
-	}
-	
+	/**
+	 * Deals a card randomly chosen from the 52 cards
+	 * @return
+	 */
 	public Card nextCard(){
-		// todo normal:  check the bounds on the next int method, may have a one-off error here
 		int nextInt = ng.nextInt(cards.size());
 		return cards.get(nextInt);
 	}

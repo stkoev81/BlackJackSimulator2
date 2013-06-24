@@ -17,7 +17,7 @@ import com.skoev.blackjack2.model.game.*;
  * @author stefan.t.koev
  *
  */
-public class MockDeck extends Deck {
+class MockDeck extends Deck {
 	private Iterator<Card> it;
 	
 	public MockDeck(Rank ... ranks){

@@ -1,5 +1,6 @@
 package com.skoev.blackjack2.model.account;
 import com.skoev.blackjack2.model.game.*;
+import com.skoev.blackjack2.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,19 +16,16 @@ public class User {
 	private List<Game> games = new ArrayList<Game>();
 	
 	public User(String username, String password) {
+		Util.assertNotEmpty(username);
+		Util.assertNotEmpty(password);
 		this.username = username;
 		this.password = password;
 	}
 
-	public boolean deleteGame(int gameId){
+	public void deleteGame(int gameId){
 		int i = getGameIndex(gameId);
-		if(i < 0){
-			return false;
-		}
-		else {
-			games.remove(i); 
-			return true;
-		}
+		Util.assertTrue(i >= 0);
+		games.remove(i); 
 	}
 	
 	private int getGameIndex(int gameId){
@@ -52,18 +50,15 @@ public class User {
 		return id;
 	}
 	
-		
 	public Game getGame(int gameId){
 		int i = getGameIndex(gameId);
-		if(i < 0){
-			return null;
-		}
-		else{
-			return games.get(i);
-		}
+		Util.assertTrue(i >= 0);
+		return games.get(i);
+
 	}
 	//todo advanced: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
 	public void addNewGame(Game game){
+		Util.assertNotNull(game);
 		game.setGameID(getNextGameId());
 		games.add(game);
 	}
@@ -72,6 +67,10 @@ public class User {
 		return games;
 	}
 	
+	/**
+	 * 
+	 * @return the gameId's for all available games
+	 */
 	public Collection<Integer> getGameIds(){
 		Collection<Integer> gameIds = new ArrayList<Integer>();
 		for(Game game : games){

@@ -2,11 +2,8 @@ package com.skoev.blackjack2.model.game;
 
 
 /**
- * 
- * 
- * 
- * @author stefan.t.koev
- *
+ * A playing card. Although in blackjack only the rank matters and not the suit, the card is given both rank and suit so that it can 
+ * resemble a real card. 
  */
 public class Card {
 	private Suit suit;

@@ -12,10 +12,15 @@ import java.util.Stack;
 import java.util.Collections;
 
 import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
+import com.skoev.blackjack2.util.Util;
 
 
 
 /**
+ * Represents a round of the blackjack game. The round object should be mutated only by its owning game object. <br/>A round begins by the player making a bet. Then, the he is dealt hands. Then he is given various
+ * offers from which he chooses. The round ends when the player's cards go over 21 or when his cards are compared to the dealer's hand. Each round is 
+ * associated with one dealer hand and with one or more player hands. The player starts with one hand, but if he chooses a split offer at any time, 
+ * two hands are formed (and they can be split further).  
  * @author stefan.t.koev
  *
  */
@@ -32,25 +37,35 @@ public class Round {
 	private List<Offer> availableOffers = Collections.EMPTY_LIST;
 	
 		
-	/**
-	 * @param game
-	 */
-	public Round(Game game) {
+	Round(Game game) {
+		Util.assertNotNull(game);
+		Util.assertNotNull(game.getMoneyCurrent());
 		this.game = game;
 		this.moneyStart = game.getMoneyCurrent();
 	}
+	/**
+	 * Represents the states through which a standard blackjack round goes.   
+	 */
 	public enum RoundStatus{
 		HAND_BEING_DEALT, HAND_BEING_INSURED, HANDS_BEING_PLAYED_OUT, HANDS_BEING_COMPARED_TO_DEALERS_HAND, ROUND_FINISHED;
 	}
+	/**
+	 * Represents an offer that is made to the player. These meaning of these offers is part of the standard Blackjack vocabulary. 
+	 */
 	public enum Offer{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
-	void play(PlayingStrategy playingStrategy){
+	
+	/**
+	 * Starts or continues playing the round with the given playingStrategy. The action taken to play the round depend on the current round
+	 * status. 
+	 */
+	void play(PlayingStrategy playingStrategy) throws InsufficientMoneyException{
+		Util.assertNotNull(playingStrategy);
 		switch(roundStatus){
 		case HAND_BEING_DEALT: 
 			BigDecimal betAmount = playingStrategy.respondToAmountBet();
 			if(betAmount == null){
-				game.setUserInputNeeded(true);
 				return;
 			}
 			game.subtractMoney(betAmount);
@@ -60,11 +75,10 @@ public class Round {
 		case HAND_BEING_INSURED: 
 			Offer playerResponse = null;
 			currentHand = hands.get(0);
-			availableOffers = getAvailableOffers(currentHand, true);
+			availableOffers = getAvailableOffers();
 			if(availableOffers.size() > 0 ){
 				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
-					game.setUserInputNeeded(true);
 					return;
 				}
 				applyOffer(playerResponse);
@@ -84,10 +98,9 @@ public class Round {
 					currentHand = handsToProcess.remove();
 				}
 				playerResponse = null;
-				availableOffers = getAvailableOffers(currentHand, false);
+				availableOffers = getAvailableOffers();
 				playerResponse = playingStrategy.respondToOffer(availableOffers, currentHand, dealerHand);
 				if(playerResponse == null){
-					game.setUserInputNeeded(true);
 					return;
 				}
 				applyOffer(playerResponse); //in case of split, the handBeingResolved and handsToResolve will be changed
@@ -104,84 +117,87 @@ public class Round {
 			moneyEnd = game.getMoneyCurrent();
 		}
 	}
-	private void applyOffer(Offer offer){
-		if(offer == null){
-			throw new IllegalArgumentException();
-		}
+	
+	private void applyOffer(Offer offer) throws InsufficientMoneyException{
+		Util.assertNotNull(offer);
 		if(!availableOffers.contains(offer)){
 			throw new IllegalStateException();
 		}
 		
 		switch(offer){
-		case ACCEPT_INSURANCE:
-			
-			game.subtractMoney(currentHand.getInsuranceAmountBet());
-			dealerHand.addCard(game.dealCard());
-			
-			if(dealerHand.calculateCurrentPoints() == 21){ // insurance won
-				game.addMoney(currentHand.getInsuranceAmountToBeWon());
-				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.WIN);
-			}
-			else { // insurance lost
-				// do nothing - insurance already subtracted form money, no need to subtract more money here
-				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.LOSS);
-			}
-			break;
-		case DECLINE_INSURANCE:
-			currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.DECLINED);
-			break;
-		case STAND:
-			currentHand = null; //we're done with playing this hand
-			
-//			
+			case ACCEPT_INSURANCE:
 				
-			break;
-		case HIT:
-			currentHand.addCard(game.dealCard());
-			if(currentHand.calculateCurrentPoints() > 21 || currentHand.calculateCurrentPoints() == 21){
+				game.subtractMoney(currentHand.getInsuranceAmountBet());
+				dealerHand.addCard(game.dealCard());
+				
+				if(dealerHand.calculateCurrentPoints() == 21){ // insurance won
+					game.addMoney(currentHand.getInsuranceAmountToBeWon());
+					currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.WIN);
+				}
+				else { // insurance lost
+					// do nothing - insurance already subtracted form money, no need to subtract more money here
+					currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.LOSS);
+				}
+				break;
+			case DECLINE_INSURANCE:
+				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.DECLINED);
+				break;
+			case STAND:
 				currentHand = null; //we're done with playing this hand
-			}
-			else{
-				// do nothing; leave currentHand != null, which means will keep playing this hand
-			}
+				break;
+			case HIT:
+				currentHand.addCard(game.dealCard());
+				if(currentHand.calculateCurrentPoints() > 21 || currentHand.calculateCurrentPoints() == 21){
+					currentHand = null; //we're done with playing this hand
+				}
+				else{
+					// do nothing; leave currentHand != null, which means will keep playing this hand
+				}
+				break;
+			case DOUBLE:
+				// take just one more card and double the amount bet
+				currentHand.addCard(game.dealCard());
+				BigDecimal amountBet = currentHand.getAmountBet();
+				currentHand.setAmountBet(amountBet.multiply(BigDecimal.valueOf(2)));
+				game.subtractMoney(amountBet);
+				currentHand = null; //we're done with playing this hand
+				break;
 			
-
-					
-			break;
-		case DOUBLE:
-			// take just one more card and double the amount bet
-			currentHand.addCard(game.dealCard());
-			BigDecimal amountBet = currentHand.getAmountBet();
-			currentHand.setAmountBet(amountBet.multiply(BigDecimal.valueOf(2)));
-			game.subtractMoney(amountBet);
-			currentHand = null; //we're done with playing this hand
-			break;
-		
-		case SPLIT:
-			Hand newHand = currentHand.split(game.dealCard(), game.dealCard(), hands.size() + 1);
-			game.subtractMoney(newHand.getAmountBet());
-			hands.add(newHand);						
-		}	
+			case SPLIT:
+				Hand newHand = currentHand.split(game.dealCard(), game.dealCard(), hands.size() + 1);
+				game.subtractMoney(newHand.getAmountBet());
+				hands.add(newHand);						
+			}	
 		
 	}
-	private List<Offer> getAvailableOffers(Hand hand, boolean insuranceOffers){
+	/**
+	 * Returns the available offers, which depend on the status of the blackjack round, the player's hand, and the dealer's hand. If the 
+	 * hand has just been dealt and the dealer's hand contains an Ace, the offers are to accept or decline insurance. If the round is past the 
+	 * insurance stage, the available offers are hit, stand, and double (and also split if the hand contains two cards of the same rank). 
+	 */
+	public List<Offer> getAvailableOffers(){
 		List<Offer> offers = new LinkedList<Offer>();
-		if(insuranceOffers){
+		if(RoundStatus.HAND_BEING_INSURED.equals(roundStatus) && dealerHand != null){
 			if (dealerHand.firstCardIsAce() ){
 				offers.add(Offer.ACCEPT_INSURANCE);
 				offers.add(Offer.DECLINE_INSURANCE);
 			}
 		}
-		else {
+		else if(RoundStatus.HANDS_BEING_PLAYED_OUT.equals(roundStatus) && currentHand != null){
 			offers.add(Offer.HIT);
 			offers.add(Offer.STAND);
 			offers.add(Offer.DOUBLE);
-			if(hand.isEligibleForSplit()){
+			if(currentHand.isEligibleForSplit()){
 				offers.add(Offer.SPLIT);
 			}
 		}
 		return offers;
 	}
+	/**
+	 * Calculates the dealer's hand points, which might involve dealing more cards to the dealer. The dealer receives more cards(i.e. "hits") if the hand value is 
+	 * less than or equal to 16; otherwise he keeps current hand (i.e. "stands"). If the dealer's hand has already been calculated, this method uses the 
+	 * old value and doesn't deal more cards (which would be incorrect).   
+	 */
 	private int calculateDealersHandPoints(){
 		if(dealerHand.getCards().size() == 1){ //dealer might have already received 2nd card if there was insurance but otherwise only has 1 still
 			dealerHand.addCard(game.dealCard());
@@ -209,8 +225,7 @@ public class Round {
 		
 	}
 	private void compareToDealerHandAndAdjustMoney(Hand hand){
-		// 
-
+		Util.assertNotNull(hand);
 		if(hand.calculateCurrentPoints() > 21){ //automatic loss
 			// mark as lost, 0 points
 			hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
@@ -240,45 +255,64 @@ public class Round {
 		}
 		
 	}
-			
+	/**
+	 * Retrieve the player hand for this handNumber. A player starts out with one hand but may eventually have more than one due to splitting. Hand numbers start with 1.  		
+	 */
 	public Hand getHand(int handNumber){
-		if(handNumber < 1 || handNumber > hands.size()){
-			return null;
-		}
+		Util.assertTrue(!(handNumber < 1 || handNumber > hands.size()));
 		return hands.get(handNumber - 1); 
 	}
-	
+	/**
+	 * Returns the number of this round. Rounds start with 1. 
+	 */
 	public int getRoundNumber() {
 		return roundNumber;
 	}
-	
+	/**
+	 * Returns the player's starting money. 
+	 */
 	public BigDecimal getMoneyStart() {
 		return moneyStart;
 	}
+	/**
+	 * Returns the player's ending money. The difference between ending and starting money is the amount the player won. 
+	 */
 	public BigDecimal getMoneyEnd() {
 		return moneyEnd;
 	}
+	
 	public RoundStatus getRoundStatus() {
 		return roundStatus;
 	}
+	
+	/**
+	 * Returns all of the player's hands. 
+	 */
 	public List<Hand> getHands() {
 		return hands;
 	}
+
+	/**
+	 * Returns the dealer's hand. The dealer always has only one hand. 
+	 * @return
+	 */
 	public Hand getDealerHand() {
 		return dealerHand;
 	}
+	
+	/**
+	 * Returns the player's hand that is currently being played. The player may have more than one hands, but they are played one at a time.   
+	 * @return
+	 */
 	public Hand getCurrentHand() {
 		return currentHand;
 	}
-	public List<Offer> getAvailableOffers() {
-		return availableOffers;
-	}
+	
 	void setRoundNumber(int roundNumber) {
 		this.roundNumber = roundNumber;
 	}
 	
 }
-//todo normal: automatic win when the hand is 21 - don't ask for player's response. 	
 		
 	
 		

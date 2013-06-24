@@ -225,11 +225,16 @@ public class Controller {
 	
 	private void playGame(Game game){
 		do {
-			GameService.playGame(user, game);
-			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only).
+			try{
+				GameService.playGame(user, game);
+			}
+			catch(InsufficientMoneyException e){
+				ViewGeneral.display("Error! Player tried to make a bet that exceeds money available. Cannot continue");
+			}
+			//you end up here only if game is finished(any strategy) or if input is needed (interactive strategy only) or if insufficient money for bet
 			
 			//	interactive case, game not finished
-			if(game.isInteractive() && game.isUserInputNeeded()){
+			if(game.isInteractive() && !game.isFinished() && game.isUserInputNeeded()){
 				PlayingStrategy strategy = game.getPlayingStrategy();
 				Round round = game.getCurrentRound();
 				if(Round.RoundStatus.HAND_BEING_DEALT.equals(round.getRoundStatus())){
@@ -238,8 +243,7 @@ public class Controller {
 						ViewGeneral.displayHeader("Interactive game screen");
 					}
 					else{
-						Round previousRound = game.getLastRound();
-						View.displayRoundDetails(previousRound);
+						View.displayRoundDetails(game.getLastRound());
 					}
 					strategy.setAmountBet(View.getAmountBet(game.getGameID(), round.getRoundNumber()));
 					ViewGeneral.display("Round started.");
@@ -248,21 +252,18 @@ public class Controller {
 					strategy.setResponseToOffer(View.getResponseToOffer(round.getAvailableOffers(), round.getDealerHand(), round.getCurrentHand()));
 				}
 			}
-			
 			// interactive case, game finished
-			if(game.isInteractive() && !game.isUserInputNeeded()){
-				int n = game.getPastRounds().size();
-				View.displayRoundDetails(game.getPastRounds().get(n-1));
+			else if(game.isInteractive() && game.isFinished()){
+				View.displayRoundDetails(game.getLastRound());
 				ViewGeneral.displayFooter();
 			}
-			
 			//	non-interactive case, game finished
-			if(!game.isInteractive()){
+			else if(!game.isInteractive()){
 				ViewGeneral.displayHeader("Non-interactive game screen");
 				View.displayGameDetails(game);
 				ViewGeneral.displayFooter();
 			}
 		}
-		while(game.isUserInputNeeded());
+		while(game.isInteractive() && !game.isFinished());
 	} 
 }

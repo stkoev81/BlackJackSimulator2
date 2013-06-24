@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.service;
+package com.skoev.blackjack2.infrastructure;
 
 public class ResourceException extends RuntimeException{
 

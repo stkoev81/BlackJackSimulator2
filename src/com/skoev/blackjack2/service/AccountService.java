@@ -18,6 +18,11 @@ public class AccountService {
 	
 	private static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
 	
+	/**
+	 * @param username
+	 * @param password
+	 * @return The User object for the authenticated user; null if user could not be authenticated
+	 */
 	public static User authenticateUser(String username, String password) {
 		User user = userRepository.getUser(username);
 		if(user == null || !user.getPassword().equals(password)){
@@ -28,6 +33,12 @@ public class AccountService {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return The newly created User object; null if it could not be created because the username/password violate rules or because username unavailable. 
+	 */
 	public static User createNewUser(String username, String password){
 		User user = null;
 		if(checkUsernameAvailable(username) && checkUsernamePasswordRules(username, password)){
@@ -36,7 +47,12 @@ public class AccountService {
 		}
 		return user;
 	}
-	
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return True if the username and password obey the rules of the application; false otherwise. 
+	 */
 	public static boolean checkUsernamePasswordRules(String username, String password){
 		if (checkLength(PASSWORD_LENGTH_RULES, password) && checkLength(USERNAME_LENGTH_RULES, username)){
 			return true;
@@ -45,7 +61,7 @@ public class AccountService {
 			return false; 
 		}
 	}
-	
+
 	private static boolean checkLength(int[] cons, String toCheck){
 		assert cons.length == 2;
 		if (toCheck == null || toCheck.length() < cons[0] || toCheck.length() > cons[1]){
@@ -56,6 +72,11 @@ public class AccountService {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param username
+	 * @return True if this username is available (not already used); false otherwise. 
+	 */
 	public static boolean checkUsernameAvailable(String username){
 		User user = userRepository.getUser(username);
 		if(user == null){

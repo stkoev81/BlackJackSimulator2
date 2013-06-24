@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.skoev.blackjack2.model.account.*;
-import com.skoev.blackjack2.service.UserRepository;
 
 /**
  * Implements a simple in-memory repository for User objects. The data in this repository is not persistent and is lost when the applciation is restarted. 

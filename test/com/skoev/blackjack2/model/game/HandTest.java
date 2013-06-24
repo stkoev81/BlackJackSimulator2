@@ -18,6 +18,9 @@ public class HandTest {
 	public void setUp() throws Exception {
 	}
 
+	/**
+	 * Tests the hand point calculation mainly when one or more aces are involved. If no aces involved, the point calculation is very simple. 
+	 */
 	@Test
 	public void testPointCalculation() {
 		assertEquals(20, (new Hand(null, 0, toCards(Rank.ACE, Rank.NINE)).calculateCurrentPoints()));

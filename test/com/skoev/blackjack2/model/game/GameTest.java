@@ -40,7 +40,7 @@ public class GameTest {
 		//test number of rounds played (1 round)
 		PlayingStrategy playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		Game game = new Game(playingStrategy, 1, MONEY_10);
-		game.play();
+		playGameWrapException(game);
 		assertEquals(game.getNumRoundsPlayed(), 1);
 		assertEquals(game.getNumRoundsToPlay(), 1); 
 		assertEquals(game.getPastRounds().size(), 1); 
@@ -55,7 +55,7 @@ public class GameTest {
 		//test number of rounds played (5 rounds)
 		playingStrategy = new PlayingStrategyFixed(Round.Offer.STAND, MONEY_1, false);
 		game = new Game(playingStrategy, 5, MONEY_10);
-		game.play();
+		playGameWrapException(game);
 		assertEquals(game.getNumRoundsPlayed(), 5);
 		assertEquals(game.getNumRoundsToPlay(), 5); 
 		assertEquals(game.getPastRounds().size(), 5); 
@@ -71,7 +71,7 @@ public class GameTest {
 		playingStrategy = new PlayingStrategyFixed(Round.Offer.HIT, MONEY_1, false);
 		game = new Game(playingStrategy, 20, MONEY_10);
 		game.setDeck(new MockDeckFixed(Rank.TEN)); // by getting only 10s and hitting each time will definitely lose
-		game.play();
+		playGameWrapException(game);
 		assertEquals(game.getNumRoundsPlayed(), 10);
 		assertEquals(game.getNumRoundsToPlay(), 20); 
 		assertEquals(game.getPastRounds().size(), 10); 
@@ -92,7 +92,7 @@ public class GameTest {
 		//test number of rounds played (1 round)
 		PlayingStrategy playingStrategy = new PlayingStrategyInteractive();
 		Game game = new Game(playingStrategy, 1, MONEY_10);
-		game.play();
+		playGameWrapException(game);
 		game.setDeck(new MockDeckFixed(Rank.TEN)); // deterministic deck needed here; with random may sometimes deal an ACE to dealer, which will cause insurance offer to be made
 		assertEquals(game.isFinished(), false);
 		assertEquals(game.isUserInputNeeded(), true);
@@ -100,7 +100,7 @@ public class GameTest {
 		assertEquals(Round.RoundStatus.HAND_BEING_DEALT, round.getRoundStatus());
 		
 		playingStrategy.setAmountBet(MONEY_1);
-		game.play();
+		playGameWrapException(game);
 
 		assertEquals(game.isFinished(), false);
 		assertEquals(game.isUserInputNeeded(), true);
@@ -108,7 +108,7 @@ public class GameTest {
 		assertEquals(Round.RoundStatus.HANDS_BEING_PLAYED_OUT, round.getRoundStatus());
 		
 		playingStrategy.setResponseToOffer(Offer.STAND);
-		game.play();
+		playGameWrapException(game);
 		
 		assertEquals(game.isFinished(), true);
 		assertEquals(game.isUserInputNeeded(), false);
@@ -128,7 +128,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.TWO, Rank.TEN, Rank.NINE, Rank.SIX, Rank.NINE); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -159,7 +159,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.NINE, Rank.EIGHT); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -190,7 +190,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.ACE, Rank.TEN, Rank.ACE, Rank.JACK); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -221,7 +221,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.ACE, Rank.JACK); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -252,7 +252,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.ACE, Rank.EIGHT); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -283,7 +283,7 @@ public class GameTest {
 		Game game = new Game(playingStrategy, 1, MONEY_10);
 		Deck deck = new MockDeck(Rank.THREE, Rank.TEN, Rank.TEN, Rank.TWO, Rank.EIGHT); 
 		game.setDeck(deck); 
-		game.play();
+		playGameWrapException(game);
 		Round round = game.getLastRound();
 		Hand hand = round.getHand(1);
 		Hand dealerHand = round.getDealerHand();
@@ -315,13 +315,13 @@ public class GameTest {
 		Deck deck = new MockDeck(Rank.THREE, Rank.THREE, Rank.TEN, Rank.TWO, Rank.EIGHT, Rank.SEVEN); 
 		game.setDeck(deck); 
 		
-		game.play();
+		playGameWrapException(game);
 		playingStrategy.setAmountBet(MONEY_1);
-		game.play();
+		playGameWrapException(game);
 		playingStrategy.setResponseToOffer(Offer.SPLIT);
-		game.play();
+		playGameWrapException(game);
 		playingStrategy.setResponseToOffer(Offer.STAND);
-		game.play();
+		playGameWrapException(game);
 		playingStrategy.setResponseToOffer(Offer.STAND);
 		
 		
@@ -345,6 +345,15 @@ public class GameTest {
 		assertEquals(round.getMoneyEnd(), MONEY_8);
 		assertEquals(game.getMoneyStart(), MONEY_10);
 		assertEquals(game.getMoneyCurrent(), MONEY_8);
+	}
+	
+	private void playGameWrapException(Game game){
+		try{
+			game.play();
+		}
+		catch(Exception e){
+			throw new RuntimeException(e);
+		}
 	}
 	
 	

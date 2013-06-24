@@ -2,9 +2,11 @@ package com.skoev.blackjack2.service;
 
 import java.util.Collection;
 
+import com.skoev.blackjack2.infrastructure.UserRepository;
 import com.skoev.blackjack2.infrastructure.UserRepositoryImpl;
 import com.skoev.blackjack2.model.account.User;
 import com.skoev.blackjack2.model.game.Game;
+import com.skoev.blackjack2.model.game.InsufficientMoneyException;
 
 /**
  *	Provides game playing functionality. Also starts new games and retrieves existing games. 
@@ -22,7 +24,13 @@ public class GameService {
 		userRepository.saveUser(user);
 	}
 
-	public static void playGame(User user, Game game){
+	/**
+	 * 
+	 * @param user
+	 * @param game
+	 * @throws IllegalStateException if the game is finished
+	 */
+	public static void playGame(User user, Game game) throws InsufficientMoneyException{
 		game.play();
 		userRepository.saveUser(user);
 	}
