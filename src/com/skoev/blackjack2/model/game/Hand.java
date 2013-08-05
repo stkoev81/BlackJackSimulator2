@@ -265,6 +265,27 @@ public class Hand {
 		return insuranceOutcome;
 	}
 
+	/**
+	 * Returns the card with value equal to that of the parameter or null if such card doesn't exist
+	 * @param value
+	 * @return
+	 */
+	Card getCardWithValue(Integer value){
+		for(Card card : cards){
+			if (card.getRank().getValue() == value){
+				return card;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the number of cards in the hand.
+	 * @return
+	 */
+	public int getHandSize(){
+		return cards.size();
+	} 
 	
 	
 }

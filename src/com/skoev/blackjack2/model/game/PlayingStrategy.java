@@ -14,7 +14,7 @@ public abstract class PlayingStrategy {
 	/**
 	 * Returns the amount bet on a blackjack round by the player. 
 	 */
-	 abstract BigDecimal respondToAmountBet();
+	 public abstract BigDecimal respondToAmountBet();
 
 	 /**
 	  * Returns the offer chosen by the player for given hand
@@ -22,7 +22,7 @@ public abstract class PlayingStrategy {
 	  * @param hand The player's hand for which the offers are made
 	  * @param dealerHand The corresponding dealer's hand for that player's hand. 
 	  */
-	 abstract Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
+	 public abstract Round.Offer respondToOffer(Collection<Round.Offer> offers, Hand hand, Hand dealerHand);
 	
 	 /**
 	  * Is the current strategy of the interactive or automated type
