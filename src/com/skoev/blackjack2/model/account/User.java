@@ -5,12 +5,13 @@ import com.skoev.blackjack2.util.Util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Represents a user of the application. 
  */
 
-public class User {
+public class User implements Serializable {
 	private String username; 
 	private String password;
 	private List<Game> games = new ArrayList<Game>();

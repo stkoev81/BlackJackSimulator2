@@ -16,7 +16,8 @@ public class AccountService {
 	private static final int[] USERNAME_LENGTH_RULES = {2, 10};
 	public static final String RULES_MESSAGE = "Password and username must be between 2 and 10 characters.";
 	
-	private static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
+//	private static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
+	private static UserRepository userRepository = UserRepositoryInFile.getInstance();
 	
 	/**
 	 * @param username

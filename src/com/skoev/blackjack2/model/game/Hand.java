@@ -7,13 +7,14 @@ import java.util.Collections;
 import java.util.List;
 
 import com.skoev.blackjack2.util.Util;
+import java.io.Serializable;
 
 /**
  * A hand in the blackjack game. Both players and dealers have hands. A player's hand consists of two or more cards. A dealer's hand 
  * consists of one or more. A player's hand is associated with an amount of money bet. 
  *
  */
-public class Hand {
+public class Hand implements Serializable{
 	private int handNumber; // dealer hands will have number 0; player hands will have numbers 1 and up
 	private BigDecimal amountBet;
 	private List<Card> cards = Collections.EMPTY_LIST;

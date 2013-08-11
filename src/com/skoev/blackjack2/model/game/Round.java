@@ -13,7 +13,7 @@ import java.util.Collections;
 
 import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
 import com.skoev.blackjack2.util.Util;
-
+import java.io.Serializable;
 
 
 /**
@@ -24,7 +24,7 @@ import com.skoev.blackjack2.util.Util;
  * @author stefan.t.koev
  *
  */
-public class Round {
+public class Round implements Serializable{
 	private int roundNumber;
 	private BigDecimal moneyStart;
 	private BigDecimal moneyEnd;

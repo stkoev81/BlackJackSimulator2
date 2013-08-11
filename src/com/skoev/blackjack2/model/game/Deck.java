@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
+import java.io.Serializable;
 
 /**
  * Models a standard deck of cards that is used to deal cards in blackjack game. The deck consists of the normal 52 cards, and the card to be dealt is chosen
@@ -14,7 +14,7 @@ import java.util.Random;
  * In a physical blackjack game, normally multiple decks of cards are mixed together to form a very large deck so the probability doesn't change much over time. 
  *
  */
-class Deck {
+class Deck implements Serializable{
 	private Random ng; 
 	protected List<Card> cards;
 	

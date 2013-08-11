@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.io.Serializable;
 
 import com.skoev.blackjack2.util.Util;
 /**
@@ -13,7 +14,7 @@ import com.skoev.blackjack2.util.Util;
  * money the player bets and and which offer the player chooses.    
  *
  */
-public class Game {
+public class Game implements Serializable{
 	private int gameID = 1; 
 	private int numRoundsPlayed; 
 	private final int numRoundsToPlay; 

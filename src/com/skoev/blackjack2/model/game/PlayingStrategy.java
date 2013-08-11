@@ -2,6 +2,7 @@ package com.skoev.blackjack2.model.game;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.io.Serializable;
 
 /**
  * Subclasses of this class are used to model the behavior of the blackjack player. Some subclasses can represent automated strategies, where the choices of the
@@ -9,7 +10,7 @@ import java.util.Collection;
  * player's choices.   
  *
  */
-public abstract class PlayingStrategy {
+public abstract class PlayingStrategy implements Serializable {
 
 	/**
 	 * Returns the amount bet on a blackjack round by the player. 
