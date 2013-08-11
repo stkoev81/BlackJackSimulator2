@@ -3,8 +3,8 @@ package com.skoev.blackjack2.model.game;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import com.skoev.blackjack2.common.Util;
 import com.skoev.blackjack2.model.game.Round.Offer;
-import com.skoev.blackjack2.util.Util;
 
 /**
  * Implements a blackjack playing strategy that is common in gambling texbooks and websites. This one is taken from 

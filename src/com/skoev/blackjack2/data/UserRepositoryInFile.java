@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.infrastructure;
+package com.skoev.blackjack2.data;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,9 @@ import com.skoev.blackjack2.model.account.User;
 /**
  * Implements a very simple repository in the file system using object serialization. This repository is persistent, so data
  * is preserved when the application is restarted. However, this repository lacks most of the features that a 
- * database would have, such as concurrency and transactions.   
+ * database would have, such as concurrency and transactions.<br/>
+ * The file containing the serialized objects is placed in the user's home directory under BlackjackSim/data.dat
+ *    
  * @author stefan.t.koev
  *
  */
@@ -17,7 +19,7 @@ public class UserRepositoryInFile implements UserRepository {
 
 	private static UserRepositoryInFile instance = null;
 	private static final String DIRNAME = System.getProperty("user.home")  + File.separator + "BlackjackSim";
-	private static final String FILENAME = "data"; 
+	private static final String FILENAME = "data.dat"; 
 	private Map<String, User> users;
 	
 	

@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.ui;
+package com.skoev.blackjack2.presentation;
 
 import com.skoev.blackjack2.model.game.*;
 

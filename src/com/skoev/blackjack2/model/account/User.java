@@ -1,6 +1,7 @@
 package com.skoev.blackjack2.model.account;
+import com.skoev.blackjack2.common.AggregateRoot;
+import com.skoev.blackjack2.common.Util;
 import com.skoev.blackjack2.model.game.*;
-import com.skoev.blackjack2.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,10 +9,10 @@ import java.util.List;
 import java.io.Serializable;
 
 /**
- * Represents a user of the application. 
+ * Represents a user of the application.  
  */
 
-public class User implements Serializable {
+public class User implements AggregateRoot {
 	private String username; 
 	private String password;
 	private List<Game> games = new ArrayList<Game>();
@@ -57,7 +58,6 @@ public class User implements Serializable {
 		return games.get(i);
 
 	}
-	//todo advanced: add validation rules for the aggregate root modifying its internals. For example, is this game allowed to be added for this user? Is this game allowed to be deleted for this user? 
 	public void addNewGame(Game game){
 		Util.assertNotNull(game);
 		game.setGameID(getNextGameId());

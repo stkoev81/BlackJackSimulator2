@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.ui;
+package com.skoev.blackjack2.presentation;
 
 import java.io.BufferedReader;
 import java.io.IOException;

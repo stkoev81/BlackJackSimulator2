@@ -7,14 +7,15 @@ import java.util.Collections;
 import java.util.List;
 import java.io.Serializable;
 
-import com.skoev.blackjack2.util.Util;
+import com.skoev.blackjack2.common.Entity;
+import com.skoev.blackjack2.common.Util;
 /**
  * The main class in the BlackJack model. Provides functionality for playing a single blackjack game. A game contains multiple rounds: the round that
  * is currently being played and any past rounds. A game is also associated with a playing strategy. This strategy is consulted to determine how much
  * money the player bets and and which offer the player chooses.    
  *
  */
-public class Game implements Serializable{
+public class Game implements Entity{
 	private int gameID = 1; 
 	private int numRoundsPlayed; 
 	private final int numRoundsToPlay; 

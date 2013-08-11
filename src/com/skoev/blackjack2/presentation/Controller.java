@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.ui;
+package com.skoev.blackjack2.presentation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,6 @@ public class Controller {
 	private User user; 
 	
 	public static void main(String[] args){
-		//new GameController().playSingleGame(); 
 		new Controller().startApplication();
 	}
 	

@@ -3,10 +3,9 @@ package com.skoev.blackjack2.model.game;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import com.skoev.blackjack2.common.Util;
 import com.skoev.blackjack2.model.game.Round.Offer;
-import com.skoev.blackjack2.util.Util;
 
-//todo advanced - create a hierarchy of this forseveral types of palying strategies
 /**
  * Implements and interactive playing strategy. No automated choices are made by the player. The choices must be obtained from user input and set in this class before 
  * this class can be used to make player choices. 

@@ -1,5 +1,5 @@
 /**
- * Classes that represent the game. 
+ * Classes that represent the game domain model. 
  * 
  * 
  * 

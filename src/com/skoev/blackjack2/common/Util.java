@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.util;
+package com.skoev.blackjack2.common;
 
 /**
  * Various utility methods. 

@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.skoev.blackjack2.util.Util;
+import com.skoev.blackjack2.common.Entity;
+import com.skoev.blackjack2.common.Util;
+
 import java.io.Serializable;
 
 /**
@@ -14,7 +16,7 @@ import java.io.Serializable;
  * consists of one or more. A player's hand is associated with an amount of money bet. 
  *
  */
-public class Hand implements Serializable{
+public class Hand implements Entity{
 	private int handNumber; // dealer hands will have number 0; player hands will have numbers 1 and up
 	private BigDecimal amountBet;
 	private List<Card> cards = Collections.EMPTY_LIST;

@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.infrastructure;
+package com.skoev.blackjack2.data;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +25,7 @@ public class UserRepositoryInMemory implements UserRepository{
 	}	
 	
 	private Map<String, User> users = new HashMap<String, User>();
-	
 	 
-	//todo advanced: make this thread safe either by choosing a thread safe collection or synchronizing on something. However, how do you handle the case where there needs to be transaction isolation? 
-	//todo advanced: make this support transactions -- making a backup object that is then restored if something goes wrong. Maybe make it support transactions api and locking api.
-	//todo advanced: there should be commit transaction and the client should commit because it knows best what to do if things fail. 
 	
 	@Override
 	public User getUser(String username) {

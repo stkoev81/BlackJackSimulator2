@@ -2,9 +2,9 @@ package com.skoev.blackjack2.service;
 
 import java.util.Collection;
 
-import com.skoev.blackjack2.infrastructure.UserRepository;
-import com.skoev.blackjack2.infrastructure.UserRepositoryInFile;
-import com.skoev.blackjack2.infrastructure.UserRepositoryInMemory;
+import com.skoev.blackjack2.data.UserRepository;
+import com.skoev.blackjack2.data.UserRepositoryInFile;
+import com.skoev.blackjack2.data.UserRepositoryInMemory;
 import com.skoev.blackjack2.model.account.User;
 import com.skoev.blackjack2.model.game.Game;
 import com.skoev.blackjack2.model.game.InsufficientMoneyException;

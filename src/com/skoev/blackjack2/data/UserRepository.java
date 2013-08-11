@@ -1,4 +1,4 @@
-package com.skoev.blackjack2.infrastructure;
+package com.skoev.blackjack2.data;
 
 import com.skoev.blackjack2.model.account.User;
 

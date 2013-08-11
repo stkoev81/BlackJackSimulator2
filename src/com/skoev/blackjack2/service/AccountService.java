@@ -1,7 +1,7 @@
 package com.skoev.blackjack2.service;
 import java.io.ObjectInputStream.GetField;
 
-import com.skoev.blackjack2.infrastructure.*;
+import com.skoev.blackjack2.data.*;
 import com.skoev.blackjack2.model.account.User;
 import com.skoev.blackjack2.model.game.*;
 
@@ -16,7 +16,6 @@ public class AccountService {
 	private static final int[] USERNAME_LENGTH_RULES = {2, 10};
 	public static final String RULES_MESSAGE = "Password and username must be between 2 and 10 characters.";
 	
-//	private static UserRepository userRepository = UserRepositoryImpl.getInstance(); 
 	private static UserRepository userRepository = UserRepositoryInFile.getInstance();
 	
 	/**

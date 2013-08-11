@@ -1,5 +1,6 @@
 /**
- * Contains classes that provide a service to access user accounts and play the game.  
+ * Contains classes that provide a service to access user accounts and play the game. These services simplify the usage of the domain
+ * model
  * 
  * 
  * 

@@ -5,4 +5,4 @@
  * 
  * @author Stefan Koev
  */
-package com.skoev.blackjack2.ui;
+package com.skoev.blackjack2.presentation;

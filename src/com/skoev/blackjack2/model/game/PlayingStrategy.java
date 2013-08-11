@@ -4,13 +4,15 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.io.Serializable;
 
+import com.skoev.blackjack2.common.ValueObject;
+
 /**
  * Subclasses of this class are used to model the behavior of the blackjack player. Some subclasses can represent automated strategies, where the choices of the
  * player are automatically determined and no user input is needed. Others can represent interactive strategies, where user input is needed to determine the 
  * player's choices.   
  *
  */
-public abstract class PlayingStrategy implements Serializable {
+public abstract class PlayingStrategy implements ValueObject {
 
 	/**
 	 * Returns the amount bet on a blackjack round by the player. 

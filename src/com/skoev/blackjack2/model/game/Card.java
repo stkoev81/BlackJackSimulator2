@@ -1,11 +1,13 @@
 package com.skoev.blackjack2.model.game;
 
 import java.io.Serializable;
+
+import com.skoev.blackjack2.common.ValueObject;
 /**
  * A playing card. Although in blackjack only the rank matters and not the suit, the card is given both rank and suit so that it can 
  * resemble a real card. 
  */
-public class Card implements Serializable{
+public class Card implements ValueObject{
 	private Suit suit;
 	private Rank rank;
 	

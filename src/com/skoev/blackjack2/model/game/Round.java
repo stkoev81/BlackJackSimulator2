@@ -11,8 +11,10 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.Collections;
 
+import com.skoev.blackjack2.common.Entity;
+import com.skoev.blackjack2.common.Util;
+import com.skoev.blackjack2.common.ValueObject;
 import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
-import com.skoev.blackjack2.util.Util;
 import java.io.Serializable;
 
 
@@ -24,7 +26,7 @@ import java.io.Serializable;
  * @author stefan.t.koev
  *
  */
-public class Round implements Serializable{
+public class Round implements Entity{
 	private int roundNumber;
 	private BigDecimal moneyStart;
 	private BigDecimal moneyEnd;
