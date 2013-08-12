@@ -9,7 +9,7 @@ import com.skoev.blackjack2.model.account.User;
 /**
  * Implements a very simple repository in the file system using object serialization. This repository is persistent, so data
  * is preserved when the application is restarted. However, this repository lacks most of the features that a 
- * database would have, such as concurrency and transactions.<br/>
+ * database would have, such as concurrency, transactions, and locking, and should be accessed from a single thread.<br/>
  * The file containing the serialized objects is placed in the user's home directory under BlackjackSim/data.dat
  *    
  * @author stefan.t.koev

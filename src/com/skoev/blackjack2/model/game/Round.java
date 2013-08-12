@@ -14,7 +14,7 @@ import java.util.Collections;
 import com.skoev.blackjack2.common.Entity;
 import com.skoev.blackjack2.common.Util;
 import com.skoev.blackjack2.common.ValueObject;
-import com.skoev.blackjack2.model.game.Hand.HAND_OUTCOME;
+import com.skoev.blackjack2.model.game.Hand.HandOutcome;
 import java.io.Serializable;
 
 
@@ -48,13 +48,13 @@ public class Round implements Entity{
 	/**
 	 * Represents the states through which a standard blackjack round goes.   
 	 */
-	public enum RoundStatus{
+	public enum RoundStatus implements ValueObject{
 		HAND_BEING_DEALT, HAND_BEING_INSURED, HANDS_BEING_PLAYED_OUT, HANDS_BEING_COMPARED_TO_DEALERS_HAND, ROUND_FINISHED;
 	}
 	/**
 	 * Represents an offer that is made to the player. These meaning of these offers is part of the standard Blackjack vocabulary. 
 	 */
-	public enum Offer{
+	public enum Offer implements ValueObject{
 		HIT, STAND, DOUBLE, SPLIT, ACCEPT_INSURANCE, DECLINE_INSURANCE
 	}
 	
@@ -86,7 +86,7 @@ public class Round implements Entity{
 				applyOffer(playerResponse);
 			}
 			else{
-				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.NOT_OFFERED);
+				currentHand.setInsuranceOutcome(Hand.InsuranceOutcome.NOT_OFFERED);
 			}
 			
 				
@@ -134,15 +134,15 @@ public class Round implements Entity{
 				
 				if(dealerHand.calculateCurrentPoints() == 21){ // insurance won
 					game.addMoney(currentHand.getInsuranceAmountToBeWon());
-					currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.WIN);
+					currentHand.setInsuranceOutcome(Hand.InsuranceOutcome.WIN);
 				}
 				else { // insurance lost
 					// do nothing - insurance already subtracted form money, no need to subtract more money here
-					currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.LOSS);
+					currentHand.setInsuranceOutcome(Hand.InsuranceOutcome.LOSS);
 				}
 				break;
 			case DECLINE_INSURANCE:
-				currentHand.setInsuranceOutcome(Hand.INSURANCE_OUTCOME.DECLINED);
+				currentHand.setInsuranceOutcome(Hand.InsuranceOutcome.DECLINED);
 				break;
 			case STAND:
 				currentHand = null; //we're done with playing this hand
@@ -230,7 +230,7 @@ public class Round implements Entity{
 		Util.assertNotNull(hand);
 		if(hand.calculateCurrentPoints() > 21){ //automatic loss
 			// mark as lost, 0 points
-			hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
+			hand.setHandOutcome(Hand.HandOutcome.LOSS);
 			hand.setFinalPoints(0);
 		}
 		
@@ -239,18 +239,18 @@ public class Round implements Entity{
 		else {//compare to dealer's hand
 			if (hand.calculateCurrentPoints() < calculateDealersHandPoints()){
 				//loss, do nothing, value is alredy removed from stake
-				hand.setHandOutcome(Hand.HAND_OUTCOME.LOSS);
+				hand.setHandOutcome(Hand.HandOutcome.LOSS);
 				hand.setFinalPoints(hand.calculateCurrentPoints());
 			}
 			else if(hand.calculateCurrentPoints() == calculateDealersHandPoints()){
 				//return to the stake what was already taken form it; essentially a push
-				hand.setHandOutcome(Hand.HAND_OUTCOME.PUSH);
+				hand.setHandOutcome(Hand.HandOutcome.PUSH);
 				hand.setFinalPoints(hand.calculateCurrentPoints());
 				game.addMoney(hand.getAmountBet());
 			}
 			else {
 				//win (original amount + win)
-				hand.setHandOutcome(Hand.HAND_OUTCOME.WIN);
+				hand.setHandOutcome(Hand.HandOutcome.WIN);
 				hand.setFinalPoints(hand.calculateCurrentPoints());
 				game.addMoney(hand.getAmountToBeWon());
 			}

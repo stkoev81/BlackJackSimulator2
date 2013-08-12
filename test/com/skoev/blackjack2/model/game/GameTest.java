@@ -143,8 +143,8 @@ public class GameTest {
 		assertEquals(dealerHand.calculateCurrentPoints(), 24);
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.WIN);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.NOT_OFFERED);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.WIN);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.NOT_OFFERED);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -174,8 +174,8 @@ public class GameTest {
 		assertEquals(dealerHand.calculateCurrentPoints(), 17);
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.NOT_OFFERED);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.LOSS);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.NOT_OFFERED);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -205,8 +205,8 @@ public class GameTest {
 		assertEquals(dealerHand.calculateCurrentPoints(), 21);
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.PUSH);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.DECLINED);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.PUSH);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.DECLINED);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -236,8 +236,8 @@ public class GameTest {
 		
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.WIN);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.LOSS);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.WIN);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -267,8 +267,8 @@ public class GameTest {
 		
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.LOSS);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.LOSS);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.LOSS);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -298,8 +298,8 @@ public class GameTest {
 		
 		
 		//status changes
-		assertEquals(hand.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
-		assertEquals(hand.getInsuranceOutcome(), Hand.INSURANCE_OUTCOME.NOT_OFFERED);
+		assertEquals(hand.getHandOutcome(), Hand.HandOutcome.LOSS);
+		assertEquals(hand.getInsuranceOutcome(), Hand.InsuranceOutcome.NOT_OFFERED);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 
@@ -337,8 +337,8 @@ public class GameTest {
 		
 		
 		//status changes
-		assertEquals(hand1.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
-		assertEquals(hand2.getHandOutcome(), Hand.HAND_OUTCOME.LOSS);
+		assertEquals(hand1.getHandOutcome(), Hand.HandOutcome.LOSS);
+		assertEquals(hand2.getHandOutcome(), Hand.HandOutcome.LOSS);
 		
 		//money adjustment
 		assertEquals(round.getMoneyStart(), MONEY_10); 

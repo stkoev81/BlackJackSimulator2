@@ -7,7 +7,7 @@ import com.skoev.blackjack2.model.account.*;
 /**
  * Implements a very simple in-memory repository for User objects. The data in this repository is not persistent and is lost when the application is restarted.
  * Also, this repository lacks most of the features that a 
- * database would have, such as concurrency and transactions.  
+ * database would have, such as concurrency, transactions, and locking and should be accessed from a single thread.  
  */
 
 public class UserRepositoryInMemory implements UserRepository{

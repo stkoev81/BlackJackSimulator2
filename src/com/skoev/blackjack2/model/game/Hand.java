@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.skoev.blackjack2.common.Entity;
 import com.skoev.blackjack2.common.Util;
+import com.skoev.blackjack2.common.ValueObject;
 
 import java.io.Serializable;
 
@@ -22,13 +23,13 @@ public class Hand implements Entity{
 	private List<Card> cards = Collections.EMPTY_LIST;
 	private Integer finalPoints;
 
-	private HAND_OUTCOME handOutcome = null; 
-	private INSURANCE_OUTCOME insuranceOutcome = null; 
+	private HandOutcome handOutcome = null; 
+	private InsuranceOutcome insuranceOutcome = null; 
 	
 	/**
 	 * Represents the result of playing the hand  
 	 */
-	public enum HAND_OUTCOME{
+	public enum HandOutcome implements ValueObject{
 		/**
 		 * Player won.
 		 */
@@ -44,7 +45,7 @@ public class Hand implements Entity{
 	/**
 	 * Represents the insurance status of a hand. It is not always offered, but when it is offered it can be declined; if accepted it can be won or lost. 
 	 */
-	public enum INSURANCE_OUTCOME{NOT_OFFERED, OFFERED, DECLINED, WIN, LOSS}
+	public enum InsuranceOutcome implements ValueObject {NOT_OFFERED, OFFERED, DECLINED, WIN, LOSS}
 	
 	
 	Hand(BigDecimal amountBet, int handNumber, Card ...cardsToAdd){
@@ -176,7 +177,7 @@ public class Hand implements Entity{
 		return result;
 	}
 
-	void setInsuranceOutcome(INSURANCE_OUTCOME insuranceOutcome) {
+	void setInsuranceOutcome(InsuranceOutcome insuranceOutcome) {
 		Util.assertNotNull(insuranceOutcome);
 		this.insuranceOutcome = insuranceOutcome;
 	}
@@ -212,7 +213,7 @@ public class Hand implements Entity{
 		
 	}
 
-	void setHandOutcome(HAND_OUTCOME handOutcome) {
+	void setHandOutcome(HandOutcome handOutcome) {
 		Util.assertNotNull(handOutcome);
 		this.handOutcome = handOutcome;
 	}
@@ -260,11 +261,11 @@ public class Hand implements Entity{
 		return true;
 	}
 
-	public HAND_OUTCOME getHandOutcome() {
+	public HandOutcome getHandOutcome() {
 		return handOutcome;
 	}
 
-	public INSURANCE_OUTCOME getInsuranceOutcome() {
+	public InsuranceOutcome getInsuranceOutcome() {
 		return insuranceOutcome;
 	}
 
