@@ -58,8 +58,45 @@ public class Controller {
 	
 	private void showHelp(){
 		ViewGeneral.displayHeader("Help screen");
-		// todo: add to the help message
-		String message = "This is a blackjack game help"; 
+		String message = "" 
+		
+		+"------Overview------ \r\n"
+		+"This application can be used to practice your blackjack skills "
+		+"interactively or to evaluate different playing strategies in an "
+		+"automated manner. \r\n"
+		+" \r\n"
+		+"------How the blackjack simulation works------ \r\n"
+		+"You create a user account, in which you create games. When creating a "
+		+"game, you choose one of the available playing strategies, which "
+		+"determines what responses are given to the dealer’s offers (hit, "
+		+"stand, etc.). You also choose the number of rounds to play, the "
+		+"amount of money you have, and the amount of money to bet. Then, the "
+		+"game is played until you run out of money or the number of rounds is "
+		+"finished. The results are shown for each round and are saved in your "
+		+"account so you can view them again later. Also, a game can be paused "
+		+"and resumed later. \r\n\r\n"
+		+"There are 4 playing strategies from which you can choose. One is "
+		+"interactive (i.e. requires user input) and the other ones are "
+		+"automated (response to offer is calculated based on logic rules, so "
+		+"user input is not needed). The interactive one is slow, while the "
+		+"automated ones are very fast and can be used to play hundreds of "
+		+"rounds in a second. The automated ones can therefore be used to show "
+		+"the statistically expected amount won or lost for a certain playing "
+		+"behavior. There are 3 automated strategies: fixed (always returns the "
+		+"same response), threshold (responds with hit if points below a "
+		+"threshold and with stand if above a threshold) and textbook (a "
+		+"strategy commonly recommended in gambling books/websites).  \r\n"
+		+" \r\n"
+		+"------How the user interface works------ \r\n"
+		+"NOTE: pressing \"ENTER\" without any input will cancel previous user choice and return to previous screen.  \r\n"
+		+" \r\n"
+		+"The UI basically alternates between several screens: main, help, login, create account, user’s home, game "
+		+"details, start new game, interactive game, non-interactive game. "
+		+"Depending on the options you make on one screen, you are taken to "
+		+"another screen. The user accounts, games and results are all saved "
+		+"persistently and are available after the application is restarted. "
+		+"For this, filesystem storage is used under USER_HOME/BlackjackSim/data.dat";
+		
 		ViewGeneral.display(message);
 		ViewGeneral.displayFooter();
 	}
